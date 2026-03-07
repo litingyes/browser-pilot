@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "pnpm --filter extension dev",
     "zip": "pnpm --filter extension zip",
+    "docs:dev": "pnpm --filter docs dev",
+    "docs:build": "pnpm --filter docs build",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "prepare": "husky"
