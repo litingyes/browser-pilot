@@ -6,40 +6,115 @@ settings:
 
 catalogs:
   default:
+    '@antfu/eslint-config':
+      specifier: ^7.7.0
+      version: 7.7.0
+    '@eslint-react/eslint-plugin':
+      specifier: ^2.13.0
+      version: 2.13.0
+    '@rspress/core':
+      specifier: ^2.0.3
+      version: 2.0.4
+    '@tailwindcss/vite':
+      specifier: ^4.2.1
+      version: 4.2.1
+    '@types/node':
+      specifier: ^22.8.1
+      version: 22.19.15
+    '@types/react':
+      specifier: ^19.2.14
+      version: 19.2.14
+    '@types/react-dom':
+      specifier: ^19.2.3
+      version: 19.2.3
+    '@wxt-dev/module-react':
+      specifier: ^1.1.5
+      version: 1.2.1
+    class-variance-authority:
+      specifier: ^0.7.1
+      version: 0.7.1
+    clsx:
+      specifier: ^2.1.1
+      version: 2.1.1
+    eslint:
+      specifier: ^10.0.2
+      version: 10.0.3
+    eslint-plugin-better-tailwindcss:
+      specifier: ^4.3.2
+      version: 4.3.2
+    eslint-plugin-format:
+      specifier: ^2.0.1
+      version: 2.0.1
+    eslint-plugin-react-hooks:
+      specifier: ^7.0.1
+      version: 7.0.1
+    eslint-plugin-react-refresh:
+      specifier: ^0.5.2
+      version: 0.5.2
+    husky:
+      specifier: ^9.1.7
+      version: 9.1.7
+    lint-staged:
+      specifier: ^16.3.2
+      version: 16.3.2
+    lucide-react:
+      specifier: ^0.577.0
+      version: 0.577.0
+    react:
+      specifier: ^19.2.4
+      version: 19.2.4
+    react-dom:
+      specifier: ^19.2.4
+      version: 19.2.4
+    shadcn:
+      specifier: ^4.0.0
+      version: 4.0.0
+    tailwind-merge:
+      specifier: ^3.5.0
+      version: 3.5.0
+    tailwindcss:
+      specifier: ^4.2.1
+      version: 4.2.1
+    tw-animate-css:
+      specifier: ^1.4.0
+      version: 1.4.0
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
+    wxt:
+      specifier: ^0.20.18
+      version: 0.20.18
 
 importers:
 
   .:
     devDependencies:
       '@antfu/eslint-config':
-        specifier: ^7.7.0
+        specifier: 'catalog:'
         version: 7.7.0(@eslint-react/eslint-plugin@2.13.0(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/rule-tester@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.56.1(typescript@5.9.3))(@typescript-eslint/utils@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3))(@vue/compiler-sfc@3.5.29)(eslint-plugin-format@2.0.1(eslint@10.0.3(jiti@2.6.1)))(eslint-plugin-react-hooks@7.0.1(eslint@10.0.3(jiti@2.6.1)))(eslint-plugin-react-refresh@0.5.2(eslint@10.0.3(jiti@2.6.1)))(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       '@eslint-react/eslint-plugin':
-        specifier: ^2.13.0
+        specifier: 'catalog:'
         version: 2.13.0(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       eslint:
-        specifier: ^10.0.2
+        specifier: 'catalog:'
         version: 10.0.3(jiti@2.6.1)
       eslint-plugin-better-tailwindcss:
-        specifier: ^4.3.2
+        specifier: 'catalog:'
         version: 4.3.2(eslint@10.0.3(jiti@2.6.1))(tailwindcss@4.2.1)(typescript@5.9.3)
       eslint-plugin-format:
-        specifier: ^2.0.1
+        specifier: 'catalog:'
         version: 2.0.1(eslint@10.0.3(jiti@2.6.1))
       eslint-plugin-react-hooks:
-        specifier: ^7.0.1
+        specifier: 'catalog:'
         version: 7.0.1(eslint@10.0.3(jiti@2.6.1))
       eslint-plugin-react-refresh:
-        specifier: ^0.5.2
+        specifier: 'catalog:'
         version: 0.5.2(eslint@10.0.3(jiti@2.6.1))
       husky:
-        specifier: ^9.1.7
+        specifier: 'catalog:'
         version: 9.1.7
       lint-staged:
-        specifier: ^16.3.2
+        specifier: 'catalog:'
         version: 16.3.2
       typescript:
         specifier: 'catalog:'
@@ -48,72 +123,72 @@ importers:
   packages/docs:
     dependencies:
       '@rspress/core':
-        specifier: ^2.0.3
+        specifier: 'catalog:'
         version: 2.0.4(@types/react@19.2.14)
     devDependencies:
       '@types/node':
-        specifier: ^22.8.1
+        specifier: 'catalog:'
         version: 22.19.15
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       react:
-        specifier: ^19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
 
   packages/extension:
     dependencies:
       '@tailwindcss/vite':
-        specifier: ^4.2.1
+        specifier: 'catalog:'
         version: 4.2.1(vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(yaml@2.8.2))
       class-variance-authority:
-        specifier: ^0.7.1
+        specifier: 'catalog:'
         version: 0.7.1
       clsx:
-        specifier: ^2.1.1
+        specifier: 'catalog:'
         version: 2.1.1
       lucide-react:
-        specifier: ^0.577.0
+        specifier: 'catalog:'
         version: 0.577.0(react@19.2.4)
       react:
-        specifier: ^19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       shadcn:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.0.0(@types/node@25.3.5)(typescript@5.9.3)
       tailwind-merge:
-        specifier: ^3.5.0
+        specifier: 'catalog:'
         version: 3.5.0
       tailwindcss:
-        specifier: ^4.2.1
+        specifier: 'catalog:'
         version: 4.2.1
       tw-animate-css:
-        specifier: ^1.4.0
+        specifier: 'catalog:'
         version: 1.4.0
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@wxt-dev/module-react':
-        specifier: ^1.1.5
+        specifier: 'catalog:'
         version: 1.2.1(vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(yaml@2.8.2))(wxt@0.20.18(@types/node@25.3.5)(eslint@10.0.3(jiti@2.6.1))(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.59.0)(yaml@2.8.2))
       typescript:
-        specifier: ^5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
       wxt:
-        specifier: ^0.20.18
+        specifier: 'catalog:'
         version: 0.20.18(@types/node@25.3.5)(eslint@10.0.3(jiti@2.6.1))(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.59.0)(yaml@2.8.2)
 
 packages:
@@ -6185,7 +6260,6 @@ snapshots:
   '@types/node@25.3.5':
     dependencies:
       undici-types: 7.18.2
-    optional: true
 
   '@types/react-dom@19.2.3(@types/react@19.2.14)':
     dependencies:
@@ -6641,7 +6715,7 @@ snapshots:
 
   chrome-launcher@1.2.0:
     dependencies:
-      '@types/node': 22.19.15
+      '@types/node': 25.3.5
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 2.0.2
@@ -10002,8 +10076,7 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  undici-types@7.18.2:
-    optional: true
+  undici-types@7.18.2: {}
 
   unhead@2.1.10:
     dependencies:
