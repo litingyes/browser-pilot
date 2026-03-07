@@ -13,8 +13,10 @@ pnpm-debug.log*
 *.sw?
 
 node_modules
-.output
-stats.html
-stats-*.json
-.wxt
-web-ext.config.ts
+
+# extension
+packages/extension/.wxt
+packages/extension/.output
+
+# docs
+packages/docs/doc_build
