@@ -7,6 +7,12 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/extension:
     dependencies:
       react:
         specifier: ^19.2.4
