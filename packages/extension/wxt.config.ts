@@ -10,5 +10,6 @@ export default defineConfig({
   }),
   manifest: {
     name: 'Browser Pilot',
+    permissions: ['storage'],
   },
 })
