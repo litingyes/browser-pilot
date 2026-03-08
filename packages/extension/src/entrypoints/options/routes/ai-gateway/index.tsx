@@ -3,7 +3,7 @@ import { Fragment } from 'react/jsx-runtime'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item'
-import { AI_GATEWAY_METADATA, useAiGateway } from '@/hooks/use-ai-gateway'
+import { AI_GATEWAY_METADATA, aiGatewaySchema, useAiGateway } from '@/hooks/use-ai-gateway'
 import AiGatewayDelete from './components/ai-gateway-delete'
 import AiGatewayForm from './components/ai-gateway-form'
 
@@ -55,6 +55,7 @@ export default function AiGateway() {
           </Fragment>
 
         ))}
+        { (!editMode && aiGateways.length !== aiGatewaySchema.shape.provider.options.length) && <Button variant="outline" onClick={() => setEditMode('add')}>Add AI Gateway</Button>}
         {(editMode === 'add' || !aiGateways.length) && <AiGatewayForm onUpdated={() => setEditMode(null)} />}
       </div>
       <AiGatewayDelete ref={deleteRef} onDeleted={() => setEditMode(null)} />
