@@ -1,4 +1,4 @@
-import type { AiGateway } from '@/hooks/use-ai-gateway'
+import type { AiGateway } from '@/stores/ai-gateways'
 import { useForm, useStore } from '@tanstack/react-form'
 import { useQuery } from '@tanstack/react-query'
 import { Fragment } from 'react/jsx-runtime'
@@ -9,7 +9,8 @@ import { Combobox, ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxCont
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { aiGatewaySchema, useAiGateway } from '@/hooks/use-ai-gateway'
+import { useAiGateway } from '@/hooks/use-ai-gateway'
+import { AI_GATEWAY_SCHEMA } from '@/stores/ai-gateways'
 
 interface AiGatewayFormProps {
   defaultValue?: AiGateway
@@ -31,7 +32,7 @@ export default function AiGatewayForm(
       models: [],
     },
     validators: {
-      onSubmit: aiGatewaySchema,
+      onSubmit: AI_GATEWAY_SCHEMA,
     },
     onSubmit: async ({ value }) => {
       if (isAdd) {
@@ -125,7 +126,7 @@ export default function AiGatewayForm(
                         <SelectValue placeholder="Select a provider" />
                       </SelectTrigger>
                       <SelectContent>
-                        {aiGatewaySchema.shape.provider.options.filter(provider => !aiGateways.some(g => g.provider === provider)).map(provider => (
+                        {AI_GATEWAY_SCHEMA.shape.provider.options.filter(provider => !aiGateways.some(g => g.provider === provider)).map(provider => (
                           <SelectItem key={provider} value={provider}>
                             {provider}
                           </SelectItem>

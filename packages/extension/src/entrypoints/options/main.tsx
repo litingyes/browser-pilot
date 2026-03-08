@@ -1,11 +1,12 @@
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider } from '@tanstack/react-router'
-import * as React from 'react'
 import ReactDOM from 'react-dom/client'
+import Root from '@/components/root'
 import { router } from './router'
-import '@/assets/tailwind.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <Root>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+    <ReactQueryDevtools />
+  </Root>,
 )

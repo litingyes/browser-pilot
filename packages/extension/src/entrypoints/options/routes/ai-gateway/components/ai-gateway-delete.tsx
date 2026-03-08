@@ -1,5 +1,5 @@
 import type { Ref } from 'react'
-import type { AiGateway } from '@/hooks/use-ai-gateway'
+import type { AiGateway } from '@/stores/ai-gateways'
 import { useImperativeHandle, useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
 
 interface AiGatewayDeleteProps {
   ref: Ref<{
@@ -28,20 +27,14 @@ export default function AiGatewayDelete(
   const [aiGateway, setAiGateway] = useState<AiGateway | null>(null)
 
   const { removeAiGateway } = useAiGateway()
-  const [loading, setLoading] = useState(false)
   const handleDelete = async () => {
     if (!aiGateway)
       return
 
-    setLoading(true)
-    await removeAiGateway(aiGateway.provider).then(() => {
-      onDeleted?.(aiGateway)
-      setIsOpen(false)
-    }).catch(() => {
-      toast.error('Failed to delete AI Gateway')
-    }).finally(() => {
-      setLoading(false)
-    })
+    removeAiGateway(aiGateway.provider)
+    onDeleted?.(aiGateway)
+    toast.success(`AI Gateway ${aiGateway.provider} deleted`)
+    setIsOpen(false)
   }
 
   useImperativeHandle(ref, () => {
@@ -75,7 +68,6 @@ export default function AiGatewayDelete(
             Cancel
           </AlertDialogCancel>
           <Button variant="destructive" onClick={handleDelete}>
-            {loading && <Spinner />}
             Delete
           </Button>
         </AlertDialogFooter>

@@ -1,13 +1,16 @@
+import type { AiGateway } from '@/stores/ai-gateways'
 import { BrainCircuitIcon, PenIcon, TrashIcon } from 'lucide-react'
 import { Fragment } from 'react/jsx-runtime'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item'
-import { AI_GATEWAY_METADATA, aiGatewaySchema, useAiGateway } from '@/hooks/use-ai-gateway'
+import { useAiGateway } from '@/hooks/use-ai-gateway'
+import { AI_GATEWAY_METADATA } from '@/lib/ai-gateway'
+import { AI_GATEWAY_SCHEMA } from '@/stores/ai-gateways'
 import AiGatewayDelete from './components/ai-gateway-delete'
 import AiGatewayForm from './components/ai-gateway-form'
 
-export default function AiGateway() {
+export default function AiGatewayRoute() {
   const { aiGateways } = useAiGateway()
   const [editMode, setEditMode] = useState<AiGateway['provider'] | 'add' | null>(null)
 
@@ -38,7 +41,7 @@ export default function AiGateway() {
                     </ItemMedia>
                     <ItemContent>
                       <ItemTitle>{aiGateway.provider}</ItemTitle>
-                      <ItemDescription>
+                      <ItemDescription className="flex flex-wrap items-center gap-2">
                         {aiGateway.models.map(model => <Badge key={model} variant="secondary">{model}</Badge>)}
                       </ItemDescription>
                     </ItemContent>
@@ -55,7 +58,7 @@ export default function AiGateway() {
           </Fragment>
 
         ))}
-        { (!editMode && aiGateways.length !== aiGatewaySchema.shape.provider.options.length) && <Button variant="outline" onClick={() => setEditMode('add')}>Add AI Gateway</Button>}
+        { (!editMode && aiGateways.length !== AI_GATEWAY_SCHEMA.shape.provider.options.length) && <Button variant="outline" onClick={() => setEditMode('add')}>Add AI Gateway</Button>}
         {(editMode === 'add' || !aiGateways.length) && <AiGatewayForm onUpdated={() => setEditMode(null)} />}
       </div>
       <AiGatewayDelete ref={deleteRef} onDeleted={() => setEditMode(null)} />

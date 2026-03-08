@@ -1,10 +1,9 @@
-import * as React from 'react'
 import ReactDOM from 'react-dom/client'
+import Root from '@/components/root'
 import App from './App'
-import '@/assets/tailwind.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <Root>
     <App />
-  </React.StrictMode>,
+  </Root>,
 )

@@ -20,7 +20,11 @@ export default antfu(
         entryPoint: '/packages/extension/src/assets/tailwind.css',
       },
     },
-    ignores: ['.agents/skills', 'packages/extension/src/components/ui'],
+    ignores: [
+      '.agents/skills',
+      'packages/extension/src/components/ui',
+      'packages/extension/src/components/ai-elements',
+    ],
   },
   {
     files: ['pnpm-workspace.yaml'],
