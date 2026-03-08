@@ -1,7 +1,8 @@
 import { BrainCircuitIcon, PenIcon, TrashIcon } from 'lucide-react'
 import { Fragment } from 'react/jsx-runtime'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Item, ItemActions, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item'
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item'
 import { AI_GATEWAY_METADATA, useAiGateway } from '@/hooks/use-ai-gateway'
 import AiGatewayDelete from './components/ai-gateway-delete'
 import AiGatewayForm from './components/ai-gateway-form'
@@ -37,6 +38,9 @@ export default function AiGateway() {
                     </ItemMedia>
                     <ItemContent>
                       <ItemTitle>{aiGateway.provider}</ItemTitle>
+                      <ItemDescription>
+                        {aiGateway.models.map(model => <Badge key={model} variant="secondary">{model}</Badge>)}
+                      </ItemDescription>
                     </ItemContent>
                     <ItemActions>
                       <Button variant="ghost" size="icon" onClick={() => setEditMode(aiGateway.provider)}>

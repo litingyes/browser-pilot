@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Link, Outlet, useLocation } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { BrainCircuitIcon } from 'lucide-react'
@@ -5,11 +7,13 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
+const queryClient = new QueryClient()
+
 export default function App() {
   const location = useLocation()
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <SidebarProvider>
         <Sidebar variant="inset">
           <SidebarContent>
@@ -36,7 +40,8 @@ export default function App() {
       </SidebarProvider>
       <Toaster />
       <TooltipProvider />
+      <ReactQueryDevtools />
       <TanStackRouterDevtools />
-    </>
+    </QueryClientProvider>
   )
 }

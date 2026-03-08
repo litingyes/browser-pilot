@@ -13,6 +13,7 @@ pnpm-debug.log*
 *.sw?
 
 node_modules
+.env.*
 
 # extension
 packages/extension/.wxt

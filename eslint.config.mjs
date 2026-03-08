@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import pluginQuery from '@tanstack/eslint-plugin-query'
 import tailwindcss from 'eslint-plugin-better-tailwindcss'
 
 export default antfu(
@@ -12,6 +13,7 @@ export default antfu(
     },
     extends: [
       tailwindcss.configs.recommended,
+      pluginQuery.configs.recommended,
     ],
     settings: {
       'better-tailwindcss': {

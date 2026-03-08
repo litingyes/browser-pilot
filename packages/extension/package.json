@@ -12,9 +12,14 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "catalog:",
+    "@ai-sdk/deepseek": "catalog:",
+    "@ai-sdk/openai": "catalog:",
     "@base-ui/react": "catalog:",
+    "@openrouter/ai-sdk-provider": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-form": "catalog:",
+    "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-devtools": "catalog:",
     "class-variance-authority": "catalog:",
@@ -31,6 +36,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "catalog:",
     "@tanstack/router-plugin": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
