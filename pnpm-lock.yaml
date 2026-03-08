@@ -15,6 +15,9 @@ catalogs:
     '@ai-sdk/openai':
       specifier: ^3.0.41
       version: 3.0.41
+    '@ai-sdk/openai-compatible':
+      specifier: ^2.0.35
+      version: 2.0.35
     '@ai-sdk/provider':
       specifier: ^3.0.8
       version: 3.0.8
@@ -247,7 +250,7 @@ importers:
         specifier: 'catalog:'
         version: 3.0.41(zod@4.3.6)
       '@ai-sdk/openai-compatible':
-        specifier: ^2.0.35
+        specifier: 'catalog:'
         version: 2.0.35(zod@4.3.6)
       '@ai-sdk/provider':
         specifier: 'catalog:'
