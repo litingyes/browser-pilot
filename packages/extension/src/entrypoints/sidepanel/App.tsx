@@ -1,12 +1,13 @@
-import { useAiModels } from '@/hooks/use-ai-models'
-import { AiChat } from './components/ai-chat'
+import { Outlet } from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 export default function App() {
-  const { modelForSidepanelChat } = useAiModels()
-
   return (
-    <div className="w-screen h-screen flex flex-col p-2">
-      <AiChat key={modelForSidepanelChat} model={modelForSidepanelChat} />
-    </div>
+    <>
+      <div className="w-screen h-screen p-2">
+        <Outlet />
+      </div>
+      <TanStackRouterDevtools />
+    </>
   )
 }

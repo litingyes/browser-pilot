@@ -1,9 +1,10 @@
+import { RouterProvider } from '@tanstack/react-router'
 import ReactDOM from 'react-dom/client'
 import Root from '@/components/root'
-import App from './App'
+import { router } from './router'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Root>
-    <App />
+    <RouterProvider router={router} />
   </Root>,
 )

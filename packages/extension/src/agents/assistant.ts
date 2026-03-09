@@ -8,12 +8,14 @@ export const assistant = new ToolLoopAgent({
   instructions: 'You are a helpful assistant.',
   model: 'default',
   callOptionsSchema: z.object({
-    model: z.string(),
+    getModel: z.function({
+      output: z.string(),
+    }),
   }),
   prepareCall: ({ options, ...settings }) => {
     return {
       ...settings,
-      model: createAiProvider().languageModel(options.model as AiModelId),
+      model: createAiProvider().languageModel(options.getModel() as AiModelId),
     }
   },
 })

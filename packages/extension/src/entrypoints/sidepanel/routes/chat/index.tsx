@@ -1,8 +1,8 @@
-import type { AiModelId } from '@/lib/ai-provider'
 import type { AiGateway } from '@/stores/ai-gateways'
 import { useChat } from '@ai-sdk/react'
 import { DirectChatTransport } from 'ai'
 import { CopyIcon, InfoIcon, RefreshCcwIcon } from 'lucide-react'
+import { useMemo, useRef } from 'react'
 import { assistant } from '@/agents/assistant'
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from '@/components/ai-elements/conversation'
 import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from '@/components/ai-elements/message'
@@ -16,22 +16,32 @@ import { Spinner } from '@/components/ui/spinner'
 import { useAiModels } from '@/hooks/use-ai-models'
 import { parseAiModelId } from '@/lib/ai-provider'
 
-interface AiChatProps {
-  model: AiModelId
-}
+export default function Chat() {
+  const { modelForSidepanelChat, setAiModel } = useAiModels()
+  const { aiModelIds } = useAiGateway()
+  const selectedModel = useMemo(
+    () => modelForSidepanelChat ?? aiModelIds[0],
+    [modelForSidepanelChat, aiModelIds],
+  )
 
-export function AiChat({ model }: AiChatProps) {
-  const { messages, sendMessage, status, stop, regenerate, error } = useChat({
-    transport: new DirectChatTransport({
+  const selectedModelRef = useRef(selectedModel)
+  selectedModelRef.current = selectedModel
+
+  const transport = useMemo(() => {
+    return new DirectChatTransport({
       agent: assistant,
       options: {
-        model,
+        getModel: () => selectedModelRef.current,
       },
       sendReasoning: true,
       sendSources: true,
       sendStart: false,
       sendFinish: false,
-    }),
+    })
+  }, [])
+
+  const { messages, sendMessage, status, stop, regenerate, error } = useChat({
+    transport,
   })
   const isLoading = useMemo(() => status === 'submitted' || status === 'streaming', [status])
   const isLoadingAndNotResponse = useMemo(() => {
@@ -47,8 +57,6 @@ export function AiChat({ model }: AiChatProps) {
     return !lastMessage?.parts?.length
   }, [messages, isLoading])
 
-  const { setAiModel } = useAiModels()
-  const { aiModelIds } = useAiGateway()
   const modelGroups = useMemo(() => {
     return aiModelIds.reduce<Record<AiGateway['provider'], string[]>>((groups, aiModelId) => {
       const { providerId, modelName } = parseAiModelId(aiModelId)
@@ -60,13 +68,9 @@ export function AiChat({ model }: AiChatProps) {
       return groups
     }, {} as Record<AiGateway['provider'], string[]>)
   }, [aiModelIds])
-  const selectedModel = useMemo(
-    () => model ?? aiModelIds[0],
-    [model, aiModelIds],
-  )
 
   return (
-    <>
+    <div className="h-full flex flex-col">
       <Conversation>
         <ConversationContent>
           {messages.map((message, messageIndex) => {
@@ -181,6 +185,6 @@ export function AiChat({ model }: AiChatProps) {
           <PromptInputSubmit onStop={stop} status={status} />
         </PromptInputFooter>
       </PromptInput>
-    </>
+    </div>
   )
 }
