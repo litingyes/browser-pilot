@@ -2,10 +2,10 @@ import type { AiModelId } from '@/lib/ai-provider'
 import type { AiGateway } from '@/stores/ai-gateways'
 import { useChat } from '@ai-sdk/react'
 import { DirectChatTransport } from 'ai'
-import { InfoIcon } from 'lucide-react'
+import { CopyIcon, InfoIcon, RefreshCcwIcon } from 'lucide-react'
 import { assistant } from '@/agents/assistant'
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from '@/components/ai-elements/conversation'
-import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message'
+import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from '@/components/ai-elements/message'
 import { ModelSelector, ModelSelectorContent, ModelSelectorEmpty, ModelSelectorGroup, ModelSelectorInput, ModelSelectorItem, ModelSelectorList, ModelSelectorLogo, ModelSelectorName, ModelSelectorTrigger } from '@/components/ai-elements/model-selector'
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, PromptInputTools } from '@/components/ai-elements/prompt-input'
 import { Reasoning, ReasoningContent, ReasoningTrigger } from '@/components/ai-elements/reasoning'
@@ -21,7 +21,7 @@ interface AiChatProps {
 }
 
 export function AiChat({ model }: AiChatProps) {
-  const { messages, sendMessage, status, stop, error } = useChat({
+  const { messages, sendMessage, status, stop, regenerate, error } = useChat({
     transport: new DirectChatTransport({
       agent: assistant,
       options: {
@@ -99,6 +99,16 @@ export function AiChat({ model }: AiChatProps) {
                     return null
                   })}
                 </MessageContent>
+                {message.role === 'assistant' && (!isLastMessage || !isLoading) && (
+                  <MessageActions>
+                    <MessageAction tooltip="Regenerate" onClick={() => regenerate()}>
+                      <RefreshCcwIcon />
+                    </MessageAction>
+                    <MessageAction tooltip="Copy" onClick={() => navigator.clipboard.writeText(message.parts.find(part => part.type === 'text')?.text ?? '')}>
+                      <CopyIcon />
+                    </MessageAction>
+                  </MessageActions>
+                )}
               </Message>
             )
           })}
