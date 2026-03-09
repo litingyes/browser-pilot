@@ -69,33 +69,39 @@ export function AiChat({ model }: AiChatProps) {
     <>
       <Conversation>
         <ConversationContent>
-          {messages.map(message => (
-            <Message key={message.id} from={message.role}>
-              <MessageContent>
-                {message.parts.map((part, index) => {
-                  if (part.type === 'text') {
-                    return (
-                      <MessageResponse key={`${message.id}-${part.type}-${index}`}>
-                        {part.text}
-                      </MessageResponse>
-                    )
-                  }
-                  else if (part.type === 'reasoning') {
-                    return (
-                      <Reasoning key={`${message.id}-${part.type}-${index}`}>
-                        <ReasoningTrigger />
-                        <ReasoningContent>
-                          {part.text}
-                        </ReasoningContent>
-                      </Reasoning>
-                    )
-                  }
+          {messages.map((message, messageIndex) => {
+            const isLastMessage = messageIndex === messages.length - 1
 
-                  return null
-                })}
-              </MessageContent>
-            </Message>
-          ))}
+            return (
+              <Message key={message.id} from={message.role}>
+                <MessageContent>
+                  {message.parts.map((part, partIndex) => {
+                    const isLastPart = partIndex === message.parts.length - 1
+
+                    if (part.type === 'text') {
+                      return (
+                        <MessageResponse key={`${message.id}-${part.type}-${partIndex}`}>
+                          {part.text}
+                        </MessageResponse>
+                      )
+                    }
+                    else if (part.type === 'reasoning') {
+                      return (
+                        <Reasoning key={`${message.id}-${part.type}-${partIndex}`} isStreaming={status === 'streaming' && isLastMessage && isLastPart}>
+                          <ReasoningTrigger />
+                          <ReasoningContent>
+                            {part.text}
+                          </ReasoningContent>
+                        </Reasoning>
+                      )
+                    }
+
+                    return null
+                  })}
+                </MessageContent>
+              </Message>
+            )
+          })}
           {isLoadingAndNotResponse && (
             <Message from="system">
               <MessageContent>

@@ -1,5 +1,7 @@
+import type { AI_MODELS } from '@/stores/ai-models'
 import { storage } from '#imports'
 import { AI_GATEWAY_STORAGE_KEY } from '@/stores/ai-gateways'
+import { AI_MODELS_STORAGE_KEY } from '@/stores/ai-models'
 
 export default defineBackground(() => {
   if (import.meta.env.DEV) {
@@ -16,5 +18,9 @@ export default defineBackground(() => {
         models: import.meta.env.WXT_BAISHAN_MODELS?.split(',') ?? [],
       },
     ])
+
+    storage.setItem(AI_MODELS_STORAGE_KEY, {
+      'sidepanel:chat': `openai-compatible/${import.meta.env.WXT_BAISHAN_MODELS?.split(',')?.[0]}`,
+    } as AI_MODELS)
   }
 })
