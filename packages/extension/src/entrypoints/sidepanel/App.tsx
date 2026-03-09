@@ -7,7 +7,7 @@ export default function App() {
       <div className="w-screen h-screen p-2">
         <Outlet />
       </div>
-      <TanStackRouterDevtools />
+      {import.meta.env.WXT_DEVTOOL_ROUTER === 'true' && <TanStackRouterDevtools />}
     </>
   )
 }

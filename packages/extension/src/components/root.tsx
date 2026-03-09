@@ -51,7 +51,7 @@ export default function Root({ children }: { children: ReactNode }) {
       <TooltipProvider>
         <QueryClientProvider client={queryClient}>
           {children}
-          <ReactQueryDevtools />
+          {import.meta.env.WXT_DEVTOOL_QUERY === 'true' && <ReactQueryDevtools />}
         </QueryClientProvider>
       </TooltipProvider>
       <Toaster />

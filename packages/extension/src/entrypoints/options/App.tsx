@@ -32,7 +32,7 @@ export default function App() {
           <Outlet />
         </SidebarInset>
       </SidebarProvider>
-      <TanStackRouterDevtools />
+      {import.meta.env.WXT_DEVTOOL_ROUTER === 'true' && <TanStackRouterDevtools />}
     </>
   )
 }
