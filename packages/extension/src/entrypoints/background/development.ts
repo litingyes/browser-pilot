@@ -3,7 +3,7 @@ import { storage } from '#imports'
 import { AI_GATEWAY_STORAGE_KEY } from '@/stores/ai-gateways'
 import { AI_MODELS_STORAGE_KEY } from '@/stores/ai-models'
 
-export function initStorageForDevelopment() {
+export function initStoragesForDevelopment() {
   storage.setItem(AI_GATEWAY_STORAGE_KEY, [
     {
       provider: 'deepseek',
