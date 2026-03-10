@@ -1,9 +1,12 @@
+import type { RecordingState } from './recording'
 import type { SnapshotRef } from './snapshot'
+import { newRecordingState } from './recording'
 
 // attach manager
 interface TabState {
   attached: boolean
   refs: Record<string, SnapshotRef>
+  recordingState: RecordingState
 }
 const tabStates = new Map<number, TabState>()
 
@@ -12,13 +15,14 @@ export function ensureTabState(tabId: number) {
     tabStates.set(tabId, {
       attached: false,
       refs: {},
+      recordingState: newRecordingState(),
     })
   }
 
   return tabStates.get(tabId)!
 }
 
-export function updateSnapshot(tabId: number, snapshot: Record<string, SnapshotRef>) {
+export function updateTabState(tabId: number, state: Partial<TabState>) {
   const tabState = ensureTabState(tabId)
-  tabState.refs = snapshot
+  tabState.refs = { ...tabState.refs, ...state.refs }
 }

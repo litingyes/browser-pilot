@@ -1,4 +1,3 @@
-import type { RecordingState } from './recording'
 import type { Command } from './types'
 import { clearCookies, getCookies, setCookies } from './cookie'
 import { attachDebugger, sendCdp } from './debugger'
@@ -40,7 +39,6 @@ import {
 } from './interaction'
 import {
   getLastRecordingFrames,
-  newRecordingState,
   recordingAddFrame,
   recordingRestart,
   recordingStart,
@@ -51,14 +49,10 @@ import { getSnapshot } from './snapshot'
 import { ensureTabState, updateTabState } from './state'
 import { clearStorage, getStorage, setStorage } from './storage'
 
-const recordingStateByTabId = new Map<number, RecordingState>()
-
 function getRecordingState(tabId: number) {
-  if (!recordingStateByTabId.has(tabId)) {
-    recordingStateByTabId.set(tabId, newRecordingState())
-  }
+  const tabState = ensureTabState(tabId)
 
-  return recordingStateByTabId.get(tabId)!
+  return tabState.recordingState
 }
 
 export async function dispatchAction(command: Command) {
@@ -137,9 +131,6 @@ export async function dispatchAction(command: Command) {
       return highlight(command.typeId, command.selectorOrRef)
     case 'TAP_TOUCH':
       return tapTouch(command.typeId, command.selectorOrRef)
-    case 'NEW_RECORDING_STATE':
-      recordingStateByTabId.set(command.typeId, newRecordingState())
-      return { ok: true }
     case 'RECORDING_START':
       return recordingStart(getRecordingState(command.typeId), command.path)
     case 'RECORDING_ADD_FRAME':

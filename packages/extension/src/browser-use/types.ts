@@ -208,10 +208,6 @@ export type TapTouchCommand = BaseCommand & {
   selectorOrRef: string
 }
 
-export type NewRecordingStateCommand = BaseCommand & {
-  action: 'NEW_RECORDING_STATE'
-}
-
 export type RecordingStartCommand = BaseCommand & {
   action: 'RECORDING_START'
   path: string
@@ -271,4 +267,4 @@ export type ClearStorageCommand = BaseCommand & {
   storageType?: StorageType
 }
 
-export type Command = GetCookiesCommand | SetCookiesCommand | ClearCookiesCommand | AttachDebuggerCommand | SendCdpCommand | ParseRefCommand | ResolveElementCenterCommand | ResolveElementObjectIdCommand | GetElementTextCommand | GetElementAttributeCommand | IsElementVisibleCommand | IsElementEnabledCommand | IsElementCheckedCommand | GetElementInnerTextCommand | GetElementInnerHtmlCommand | GetElementInputValueCommand | SetElementValueCommand | GetElementBoundingBoxCommand | GetElementCountCommand | GetElementStylesCommand | ClickCommand | DblclickCommand | HoverCommand | FillCommand | TypeTextCommand | PressKeyCommand | ScrollCommand | SelectOptionCommand | CheckCommand | UncheckCommand | FocusCommand | ClearCommand | SelectAllCommand | ScrollIntoViewCommand | DispatchEventCommand | HighlightCommand | TapTouchCommand | NewRecordingStateCommand | RecordingStartCommand | RecordingAddFrameCommand | RecordingStopCommand | RecordingRestartCommand | GetLastRecordingFramesCommand | TakeScreenshotCommand | GetSnapshotCommand | EnsureTabStateCommand | UpdateTabStateCommand | GetStorageCommand | SetStorageCommand | ClearStorageCommand
+export type Command = GetCookiesCommand | SetCookiesCommand | ClearCookiesCommand | AttachDebuggerCommand | SendCdpCommand | ParseRefCommand | ResolveElementCenterCommand | ResolveElementObjectIdCommand | GetElementTextCommand | GetElementAttributeCommand | IsElementVisibleCommand | IsElementEnabledCommand | IsElementCheckedCommand | GetElementInnerTextCommand | GetElementInnerHtmlCommand | GetElementInputValueCommand | SetElementValueCommand | GetElementBoundingBoxCommand | GetElementCountCommand | GetElementStylesCommand | ClickCommand | DblclickCommand | HoverCommand | FillCommand | TypeTextCommand | PressKeyCommand | ScrollCommand | SelectOptionCommand | CheckCommand | UncheckCommand | FocusCommand | ClearCommand | SelectAllCommand | ScrollIntoViewCommand | DispatchEventCommand | HighlightCommand | TapTouchCommand | RecordingStartCommand | RecordingAddFrameCommand | RecordingStopCommand | RecordingRestartCommand | GetLastRecordingFramesCommand | TakeScreenshotCommand | GetSnapshotCommand | EnsureTabStateCommand | UpdateTabStateCommand | GetStorageCommand | SetStorageCommand | ClearStorageCommand
