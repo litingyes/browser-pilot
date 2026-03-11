@@ -1,0 +1,8 @@
+export default function AgentSkills({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 0.5L29.4234 8.25V23.75L16 31.5L2.57661 23.75V8.25L16 0.5Z" fill="black" />
+      <path d="M16 6L24.6603 11V21L16 26L7.33975 21V11L16 6Z" fill="black" stroke="white" strokeWidth="3" />
+    </svg>
+  )
+}
