@@ -12,12 +12,12 @@ export function createAiProvider(): ProviderV3 {
   return {
     specificationVersion: 'v3',
     languageModel(modelId: AiModelId) {
-      const { providerId, modelName } = parseAiModelId(modelId)
-      const provider = getAiProvider(providerId)!
+      const parsedAiModelId = parseAiModelId(modelId)
+      const provider = getAiProvider(parsedAiModelId)!
 
-      if (providerId === 'openai-compatible') {
+      if (parsedAiModelId.providerId === 'openai-compatible') {
         return wrapLanguageModel({
-          model: provider.languageModel(modelName),
+          model: provider.languageModel(parsedAiModelId.modelName),
           middleware: extractReasoningMiddleware({
             tagName: 'think',
             separator: '\n',
@@ -26,29 +26,41 @@ export function createAiProvider(): ProviderV3 {
         })
       }
 
-      return provider.languageModel(modelName)
+      return provider.languageModel(parsedAiModelId.modelName)
     },
     embeddingModel(modelId: AiModelId) {
-      const { providerId, modelName } = parseAiModelId(modelId)
-      const provider = getAiProvider(providerId as AiGateway['provider'])!
+      const parsedAiModelId = parseAiModelId(modelId)
+      const provider = getAiProvider(parsedAiModelId)!
 
-      return provider.embeddingModel(modelName)
+      return provider.embeddingModel(parsedAiModelId.modelName)
     },
     imageModel(modelId: AiModelId) {
-      const { providerId, modelName } = parseAiModelId(modelId)
-      const provider = getAiProvider(providerId as AiGateway['provider'])!
+      const parsedAiModelId = parseAiModelId(modelId)
+      const provider = getAiProvider(parsedAiModelId)!
 
-      return provider.imageModel(modelName)
+      return provider.imageModel(parsedAiModelId.modelName)
     },
   }
 }
 
-function getAiProvider(providerId: AiGateway['provider']) {
-  const aiGateway = aiGatewaysStore.get().find(aiGateway => aiGateway.provider === providerId)!
+function getAiProvider(model: ParsedAiModelId) {
+  const aiGateway = aiGatewaysStore.get().find((aiGateway) => {
+    if (aiGateway.provider !== model.providerId) {
+      return false
+    }
+    if (aiGateway.provider === 'openai-compatible') {
+      return aiGateway.providerAlias === model.providerAlias
+    }
+    return true
+  })
+
+  if (!aiGateway) {
+    throw new Error(`AI Gateway not found for model id: ${model.rawModelId}`)
+  }
 
   if (aiGateway.provider === 'openai-compatible') {
     return createOpenAICompatible({
-      name: aiGateway.provider,
+      name: aiGateway.providerAlias!,
       apiKey: aiGateway.apiKey,
       baseURL: aiGateway.baseURL,
 
@@ -76,15 +88,54 @@ function getAiProvider(providerId: AiGateway['provider']) {
   }
 }
 
-export type AiModelId = `${AiGateway['provider']}/${string}`
+export type OpenAICompatibleProviderId = `openai-compatible:${string}`
+export type AiProviderId = Exclude<AiGateway['provider'], 'openai-compatible'> | OpenAICompatibleProviderId
+export type AiModelId = `${AiProviderId}/${string}`
+
+interface ParsedAiModelId {
+  providerId: AiGateway['provider']
+  providerAlias?: string
+  providerName: string
+  modelName: string
+  rawModelId: string
+}
+
 export function parseAiModelId(modelId: AiModelId) {
   const i = modelId.indexOf('/')
   if (i === -1) {
     throw new Error(`Invalid AI model ID: ${modelId}`)
   }
 
-  return {
-    providerId: modelId.slice(0, i) as AiGateway['provider'],
-    modelName: modelId.slice(i + 1),
+  const providerPart = modelId.slice(0, i)
+  const modelName = modelId.slice(i + 1)
+
+  if (providerPart.startsWith('openai-compatible:')) {
+    const providerAlias = providerPart.slice('openai-compatible:'.length)
+    if (!providerAlias) {
+      throw new Error(`Invalid AI model ID: ${modelId}`)
+    }
+
+    return {
+      providerId: 'openai-compatible' as const,
+      providerAlias,
+      providerName: providerAlias,
+      modelName,
+      rawModelId: modelId,
+    } satisfies ParsedAiModelId
   }
+
+  return {
+    providerId: providerPart as AiGateway['provider'],
+    providerName: providerPart,
+    modelName,
+    rawModelId: modelId,
+  } satisfies ParsedAiModelId
+}
+
+export function formatAiModelId(aiGateway: AiGateway, modelName: string): AiModelId {
+  if (aiGateway.provider === 'openai-compatible') {
+    return `openai-compatible:${aiGateway.providerAlias}/${modelName}`
+  }
+
+  return `${aiGateway.provider}/${modelName}`
 }

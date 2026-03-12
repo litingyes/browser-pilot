@@ -13,6 +13,7 @@ import { Shimmer } from '@/components/ai-elements/shimmer'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAiModels } from '@/hooks/use-ai-models'
 import { parseAiModelId } from '@/lib/ai-provider'
 import { db } from '@/lib/indexeddb'
@@ -27,6 +28,14 @@ export default function Chat() {
 
   const selectedModelRef = useRef(selectedModel)
   selectedModelRef.current = selectedModel
+
+  const selectedModelMetadata = useMemo(() => {
+    if (!selectedModel) {
+      return null
+    }
+
+    return parseAiModelId(selectedModel)
+  }, [selectedModel])
 
   const transport = useMemo(() => {
     return new DirectChatTransport({
@@ -60,15 +69,27 @@ export default function Chat() {
   }, [messages, isLoading])
 
   const modelGroups = useMemo(() => {
-    return aiModelIds.reduce<Record<AiGateway['provider'], string[]>>((groups, aiModelId) => {
-      const { providerId, modelName } = parseAiModelId(aiModelId)
-      if (!groups[providerId]) {
-        groups[providerId] = []
+    return aiModelIds.reduce<Record<string, {
+      models: {
+        id: string
+        modelName: string
+      }[]
+      providerForLogo: AiGateway['provider']
+    }>>((groups, aiModelId) => {
+      const { providerId, providerName, modelName } = parseAiModelId(aiModelId)
+      if (!groups[providerName]) {
+        groups[providerName] = {
+          models: [],
+          providerForLogo: providerId,
+        }
       }
-      groups[providerId].push(modelName)
+      groups[providerName].models.push({
+        id: aiModelId,
+        modelName,
+      })
 
       return groups
-    }, {} as Record<AiGateway['provider'], string[]>)
+    }, {})
   }, [aiModelIds])
 
   return (
@@ -154,30 +175,41 @@ export default function Chat() {
         <PromptInputFooter>
           <PromptInputTools>
             <ModelSelector>
-              <ModelSelectorTrigger
-                render={(
-                  <Button className="w-fit self-start px-2.5 font-normal" size="sm" type="button" variant="outline" />
+              <Tooltip>
+                <TooltipTrigger
+                  render={(
+                    <ModelSelectorTrigger
+                      render={(
+                        <Button className="w-fit self-start px-2.5 font-normal" size="sm" type="button" variant="outline" />
+                      )}
+                    >
+                      {selectedModelMetadata?.modelName ?? 'Select model'}
+                    </ModelSelectorTrigger>
+                  )}
+                />
+                {selectedModelMetadata && (
+                  <TooltipContent>
+                    {selectedModelMetadata.providerName}
+                  </TooltipContent>
                 )}
-              >
-                {selectedModel ?? 'Select model'}
-              </ModelSelectorTrigger>
+              </Tooltip>
               <ModelSelectorContent className="sm:max-w-2xl">
                 <ModelSelectorInput placeholder="Search models..." />
                 <ModelSelectorList>
                   <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                  {Object.entries(modelGroups).map(([provider, items]) => (
-                    <ModelSelectorGroup key={provider} heading={provider}>
-                      {items?.map(model => (
+                  {Object.entries(modelGroups).map(([providerName, group]) => (
+                    <ModelSelectorGroup key={providerName} heading={providerName}>
+                      {group.models.map(model => (
                         <ModelSelectorItem
-                          data-checked={selectedModel === model}
-                          key={model}
-                          value={`${provider} ${model}`}
+                          data-checked={selectedModel === model.id}
+                          key={model.id}
+                          value={`${providerName} ${model.modelName}`}
                           onSelect={() => {
-                            setAiModel('sidepanel:chat', `${provider}/${model}`)
+                            setAiModel('sidepanel:chat', model.id)
                           }}
                         >
-                          <ModelSelectorLogo provider={provider === 'openai-compatible' ? 'openai' : provider} />
-                          <ModelSelectorName>{model}</ModelSelectorName>
+                          <ModelSelectorLogo provider={group.providerForLogo === 'openai-compatible' ? 'openai' : group.providerForLogo} />
+                          <ModelSelectorName>{model.modelName}</ModelSelectorName>
                         </ModelSelectorItem>
                       ))}
                     </ModelSelectorGroup>

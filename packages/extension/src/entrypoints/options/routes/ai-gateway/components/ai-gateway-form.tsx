@@ -10,7 +10,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAiGateway } from '@/hooks/use-ai-gateway'
-import { AI_GATEWAY_SCHEMA } from '@/stores/ai-gateways'
+import { AI_GATEWAY_SCHEMA, getAiGatewayDisplayName } from '@/stores/ai-gateways'
 
 interface AiGatewayFormProps {
   defaultValue?: AiGateway
@@ -27,6 +27,7 @@ export default function AiGatewayForm(
   const form = useForm({
     defaultValues: defaultValue ?? {
       provider: 'openai-compatible' as AiGateway['provider'],
+      providerAlias: '',
       apiKey: '',
       baseURL: '',
       models: [],
@@ -35,16 +36,28 @@ export default function AiGatewayForm(
       onSubmit: AI_GATEWAY_SCHEMA,
     },
     onSubmit: async ({ value }) => {
+      const displayName = getAiGatewayDisplayName(value)
+      let isSuccess = false
+
       if (isAdd) {
-        addAiGateway(value)
-        toast.success(`AI Gateway ${value.provider} added`)
+        isSuccess = addAiGateway(value)
+        if (isSuccess) {
+          toast.success(`AI Gateway ${displayName} added`)
+        }
       }
       else {
-        updateAiGateway(value)
-        toast.success(`AI Gateway ${value.provider} updated`)
+        if (!defaultValue) {
+          return
+        }
+        isSuccess = updateAiGateway(defaultValue, value)
+        if (isSuccess) {
+          toast.success(`AI Gateway ${displayName} updated`)
+        }
       }
 
-      onUpdated?.(value)
+      if (isSuccess) {
+        onUpdated?.(value)
+      }
     },
   })
 
@@ -119,6 +132,7 @@ export default function AiGatewayForm(
                         form.setFieldValue('apiKey', '')
                         if (value !== 'openai-compatible') {
                           form.setFieldValue('baseURL', '')
+                          form.setFieldValue('providerAlias', '')
                         }
                       }}
                     >
@@ -126,7 +140,13 @@ export default function AiGatewayForm(
                         <SelectValue placeholder="Select a provider" />
                       </SelectTrigger>
                       <SelectContent>
-                        {AI_GATEWAY_SCHEMA.shape.provider.options.filter(provider => !aiGateways.some(g => g.provider === provider)).map(provider => (
+                        {AI_GATEWAY_SCHEMA.shape.provider.options.filter((provider) => {
+                          if (provider === 'openai-compatible') {
+                            return true
+                          }
+
+                          return !aiGateways.some(g => g.provider === provider)
+                        }).map(provider => (
                           <SelectItem key={provider} value={provider}>
                             {provider}
                           </SelectItem>
@@ -143,24 +163,44 @@ export default function AiGatewayForm(
               selector={state => state.values.provider}
               children={provider => (
                 provider === 'openai-compatible' && (
-                  <form.Field
-                    name="baseURL"
-                    children={(field) => {
-                      const shouldShowError = field.state.meta.isTouched || form.state.submissionAttempts > 0
-                      const isInvalid = shouldShowError && !field.state.meta.isValid
+                  <>
+                    <form.Field
+                      name="providerAlias"
+                      children={(field) => {
+                        const shouldShowError = field.state.meta.isTouched || form.state.submissionAttempts > 0
+                        const isInvalid = shouldShowError && !field.state.meta.isValid
 
-                      return (
-                        <Field data-invalid={isInvalid}>
-                          <FieldLabel htmlFor={field.name}>
-                            Base URL
-                          </FieldLabel>
-                          <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder="Enter your base URL" value={field.state.value} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
-                          {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                        </Field>
-                      )
-                    }}
-                  >
-                  </form.Field>
+                        return (
+                          <Field data-invalid={isInvalid}>
+                            <FieldLabel htmlFor={field.name}>
+                              Provider Alias
+                            </FieldLabel>
+                            <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder="Enter provider alias (display name)" value={field.state.value ?? ''} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
+                            {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                          </Field>
+                        )
+                      }}
+                    >
+                    </form.Field>
+                    <form.Field
+                      name="baseURL"
+                      children={(field) => {
+                        const shouldShowError = field.state.meta.isTouched || form.state.submissionAttempts > 0
+                        const isInvalid = shouldShowError && !field.state.meta.isValid
+
+                        return (
+                          <Field data-invalid={isInvalid}>
+                            <FieldLabel htmlFor={field.name}>
+                              Base URL
+                            </FieldLabel>
+                            <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder="Enter your base URL" value={field.state.value} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
+                            {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                          </Field>
+                        )
+                      }}
+                    >
+                    </form.Field>
+                  </>
                 )
               )}
             />

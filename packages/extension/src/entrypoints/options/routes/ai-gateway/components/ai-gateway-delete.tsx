@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { getAiGatewayDisplayName } from '@/stores/ai-gateways'
 
 interface AiGatewayDeleteProps {
   ref: Ref<{
@@ -31,10 +32,13 @@ export default function AiGatewayDelete(
     if (!aiGateway)
       return
 
-    removeAiGateway(aiGateway.provider)
-    onDeleted?.(aiGateway)
-    toast.success(`AI Gateway ${aiGateway.provider} deleted`)
-    setIsOpen(false)
+    const displayName = getAiGatewayDisplayName(aiGateway)
+    const isSuccess = removeAiGateway(aiGateway)
+    if (isSuccess) {
+      onDeleted?.(aiGateway)
+      toast.success(`AI Gateway ${displayName} deleted`)
+      setIsOpen(false)
+    }
   }
 
   useImperativeHandle(ref, () => {
@@ -57,7 +61,7 @@ export default function AiGatewayDelete(
             Are you sure you want to delete the AI Gateway:
             <span className="font-bold">
               {' '}
-              {aiGateway?.provider}
+              {aiGateway ? getAiGatewayDisplayName(aiGateway) : ''}
               {' '}
             </span>
             ?

@@ -12,6 +12,7 @@ export function initStoragesForDevelopment() {
     },
     {
       provider: 'openai-compatible',
+      providerAlias: 'baishan',
       apiKey: import.meta.env.WXT_BAISHAN_API_KEY,
       baseURL: import.meta.env.WXT_BAISHAN_BASE_URL,
       models: import.meta.env.WXT_BAISHAN_MODELS?.split(',') ?? [],
@@ -19,6 +20,6 @@ export function initStoragesForDevelopment() {
   ])
 
   storage.setItem(AI_MODELS_STORAGE_KEY, {
-    'sidepanel:chat': `openai-compatible/${import.meta.env.WXT_BAISHAN_MODELS?.split(',')?.[0]}`,
+    'sidepanel:chat': `openai-compatible:baishan/${import.meta.env.WXT_BAISHAN_MODELS?.split(',')?.[0]}`,
   } as AI_MODELS)
 }
