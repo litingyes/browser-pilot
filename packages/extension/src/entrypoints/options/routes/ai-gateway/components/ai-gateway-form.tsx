@@ -240,7 +240,7 @@ export default function AiGatewayForm(
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Models</FieldLabel>
-                    <Combobox items={models} multiple autoHighlight defaultValue={field.state.value} onValueChange={field.handleChange}>
+                    <Combobox items={models} multiple autoHighlight value={field.state.value ?? []} onValueChange={field.handleChange}>
                       <ComboboxChips>
                         <ComboboxValue>
                           {values => (

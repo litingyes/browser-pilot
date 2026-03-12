@@ -6,7 +6,7 @@ export const AI_GATEWAY_SCHEMA = z
     provider: z.enum(['openai-compatible', 'openrouter', 'openai', 'anthropic', 'deepseek']),
     providerAlias: z.string().trim().optional(),
     apiKey: z.string().trim(),
-    baseURL: z.string().trim(),
+    baseURL: z.string().trim().optional(),
     models: z.array(z.string()),
   })
   .superRefine((value, ctx) => {
@@ -28,23 +28,26 @@ export const AI_GATEWAY_SCHEMA = z
         path: ['models'],
       })
     }
-    if (value.provider === 'openai-compatible' && !value.baseURL) {
-      ctx.addIssue({
-        code: 'invalid_type',
-        expected: 'string',
-        received: 'undefined',
-        message: 'Base URL is required',
-        path: ['baseURL'],
-      })
-    }
-    if (value.provider === 'openai-compatible' && !value.providerAlias) {
-      ctx.addIssue({
-        code: 'invalid_type',
-        expected: 'string',
-        received: 'undefined',
-        message: 'Provider alias is required',
-        path: ['providerAlias'],
-      })
+    if (value.provider === 'openai-compatible') {
+      if (!value.providerAlias) {
+        ctx.addIssue({
+          code: 'invalid_type',
+          expected: 'string',
+          received: 'undefined',
+          message: 'Provider alias is required',
+          path: ['providerAlias'],
+        })
+      }
+
+      if (!value.baseURL) {
+        ctx.addIssue({
+          code: 'invalid_type',
+          expected: 'string',
+          received: 'undefined',
+          message: 'Base URL is required',
+          path: ['baseURL'],
+        })
+      }
     }
   })
 
