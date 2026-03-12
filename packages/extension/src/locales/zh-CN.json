@@ -1,0 +1,119 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "reset": "重置",
+    "loading": "加载中...",
+    "processing": "处理中..."
+  },
+  "sidebar": {
+    "ai": "AI",
+    "gateway": "网关",
+    "skills": "技能",
+    "preferences": "偏好设置"
+  },
+  "aiGateway": {
+    "title": "AI 网关",
+    "description": "配置可用的 AI 模型。",
+    "addButton": "添加 AI 网关",
+    "addFormTitle": "添加 AI 网关",
+    "updateFormTitle": "更新 AI 网关",
+    "provider": "提供商",
+    "providerPlaceholder": "选择提供商",
+    "providerAlias": "提供商别名",
+    "providerAliasPlaceholder": "输入提供商别名（显示名称）",
+    "baseUrl": "基础 URL",
+    "baseUrlPlaceholder": "输入基础 URL",
+    "apiKey": "API 密钥",
+    "apiKeyPlaceholder": "输入 API 密钥",
+    "models": "模型",
+    "modelsPlaceholder": "选择模型",
+    "noModelsFound": "未找到模型",
+    "toastAdded": "AI 网关 {name} 已添加",
+    "toastUpdated": "AI 网关 {name} 已更新",
+    "deleteTitle": "删除 AI 网关",
+    "deleteConfirm": "确定要删除 AI 网关：{name} 吗？",
+    "toastDeleted": "AI 网关 {name} 已删除"
+  },
+  "skills": {
+    "title": "技能",
+    "description": "配置可用的 Agent 技能。",
+    "uploadZip": "上传 ZIP",
+    "uploadFolder": "上传文件夹",
+    "noSkillsInstalled": "尚未安装技能。",
+    "updated": "更新时间：",
+    "deleteSkillTitle": "删除技能",
+    "deleteSkillConfirm": "确定要删除 \"{name}\" 吗？此操作无法撤销。",
+    "replaceSkillTitle": "替换技能",
+    "replaceSkillConfirm": "名为 \"{name}\" 的技能已存在。是否替换？",
+    "replace": "替换",
+    "skillNotFoundError": "未找到 SKILL.md 文件，请确保 skill 包中包含 SKILL.md",
+    "parsingSkill": "正在解析技能..."
+  },
+  "skillViewer": {
+    "title": "技能",
+    "download": "下载",
+    "previewUnsupported": "暂不支持预览此类型文件",
+    "selectFileToView": "选择文件查看内容"
+  },
+  "chat": {
+    "regenerate": "重新生成",
+    "copy": "复制",
+    "thinking": "思考中...",
+    "error": "错误",
+    "selectModel": "选择模型",
+    "searchModels": "搜索模型...",
+    "noModelsFound": "未找到模型。"
+  },
+  "conversation": {
+    "noMessages": "暂无消息",
+    "noMessagesHint": "开始对话后会在这里显示消息"
+  },
+  "promptInput": {
+    "addAttachments": "添加图片或文件",
+    "uploadFiles": "上传文件",
+    "noFilesMatch": "没有符合类型要求的文件。",
+    "allFilesExceedSize": "所有文件都超过大小限制。",
+    "tooManyFiles": "文件过多，部分文件未添加。",
+    "placeholder": "你想了解什么？",
+    "stop": "停止",
+    "submit": "提交"
+  },
+  "modelSelector": {
+    "title": "模型选择器",
+    "providerLogo": "{provider} 图标"
+  },
+  "reasoning": {
+    "thinking": "思考中...",
+    "thoughtForSeconds": "已思考 {seconds} 秒",
+    "thoughtForFewSeconds": "已思考几秒"
+  },
+  "tool": {
+    "awaitingApproval": "等待批准",
+    "responded": "已响应",
+    "running": "运行中",
+    "pending": "等待中",
+    "completed": "已完成",
+    "denied": "已拒绝",
+    "error": "错误",
+    "parameters": "参数",
+    "result": "结果"
+  },
+  "message": {
+    "previousBranch": "上一分支",
+    "nextBranch": "下一分支"
+  },
+  "sidebarUi": {
+    "title": "侧边栏",
+    "description": "显示移动端侧边栏。",
+    "toggleSidebar": "切换侧边栏"
+  },
+  "preferences": {
+    "title": "偏好设置",
+    "language": "语言",
+    "languageDescription": "手动选择扩展语言。",
+    "languageOptionEnglish": "English",
+    "languageOptionChinese": "简体中文"
+  }
+}

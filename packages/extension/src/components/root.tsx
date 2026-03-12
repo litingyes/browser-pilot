@@ -7,8 +7,10 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { I18nProvider } from '@/i18n/provider'
 import { AI_GATEWAY_STORAGE_KEY, aiGatewaysStore } from '@/stores/ai-gateways'
 import { AI_MODELS_STORAGE_KEY, aiModelsStore } from '@/stores/ai-models'
+import { LOCALE_STORAGE_KEY, localeStore, normalizeLocale } from '@/stores/locale'
 import '@/assets/tailwind.css'
 
 const queryClient = new QueryClient()
@@ -23,7 +25,7 @@ export default function Root({ children }: { children: ReactNode }) {
         aiGatewaysStore.setState(() => [] as AiGateway[])
       }
     })
-    storage.getItems([AI_GATEWAY_STORAGE_KEY, AI_MODELS_STORAGE_KEY]).then((values) => {
+    storage.getItems([AI_GATEWAY_STORAGE_KEY, AI_MODELS_STORAGE_KEY, LOCALE_STORAGE_KEY]).then((values) => {
       const aiGateways = values.find(value => value.key === AI_GATEWAY_STORAGE_KEY)?.value as AiGateway[]
       aiGatewaysStore.setState(() => (aiGateways ?? []) as AiGateway[])
 
@@ -31,6 +33,11 @@ export default function Root({ children }: { children: ReactNode }) {
       aiModelsStore.setState(() => (aiModels ?? {
         'sidepanel:chat': '',
       }) as AI_MODELS)
+
+      const locale = values.find(value => value.key === LOCALE_STORAGE_KEY)?.value as string | undefined
+      if (locale) {
+        localeStore.setState(() => normalizeLocale(locale))
+      }
     })
 
     const { unsubscribe: unsubscribeAiGateways } = aiGatewaysStore.subscribe((state) => {
@@ -39,21 +46,27 @@ export default function Root({ children }: { children: ReactNode }) {
     const { unsubscribe: unsubscribeAiModels } = aiModelsStore.subscribe((state) => {
       storage.setItem(AI_MODELS_STORAGE_KEY, state)
     })
+    const { unsubscribe: unsubscribeLocale } = localeStore.subscribe((state) => {
+      storage.setItem(LOCALE_STORAGE_KEY, state)
+    })
 
     return () => {
       unsubscribeAiGateways()
       unsubscribeAiModels()
+      unsubscribeLocale()
     }
   }, [])
 
   return (
     <StrictMode>
-      <TooltipProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          {import.meta.env.WXT_DEVTOOL_QUERY === 'true' && <ReactQueryDevtools />}
-        </QueryClientProvider>
-      </TooltipProvider>
+      <I18nProvider>
+        <TooltipProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            {import.meta.env.WXT_DEVTOOL_QUERY === 'true' && <ReactQueryDevtools />}
+          </QueryClientProvider>
+        </TooltipProvider>
+      </I18nProvider>
       <Toaster />
     </StrictMode>
   )

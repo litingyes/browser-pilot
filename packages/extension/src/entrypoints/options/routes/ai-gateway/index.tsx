@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item'
 import { useAiGateway } from '@/hooks/use-ai-gateway'
+import { i18n } from '@/i18n'
 import { AI_GATEWAY_METADATA } from '@/lib/ai-gateway'
 import { getAiGatewayDisplayName, getAiGatewayId } from '@/stores/ai-gateways'
 import AiGatewayDelete from './components/ai-gateway-delete'
@@ -23,10 +24,10 @@ export default function AiGatewayRoute() {
       <div className="flex flex-col gap-1">
         <h1 className="text-xl flex items-center gap-2 text-accent-foreground">
           <BrainCircuitIcon className="size-6" />
-          AI Gateway
+          {i18n.t('aiGateway.title')}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Set up available AI models.
+          {i18n.t('aiGateway.description')}
         </p>
       </div>
       <div role="list" className="mt-6 flex flex-col gap-4">
@@ -62,7 +63,7 @@ export default function AiGatewayRoute() {
             </Fragment>
           )
         })}
-        {!editMode && <Button variant="outline" onClick={() => setEditMode('add')}>Add AI Gateway</Button>}
+        {!editMode && <Button variant="outline" onClick={() => setEditMode('add')}>{i18n.t('aiGateway.addButton')}</Button>}
         {(editMode === 'add' || !aiGateways.length) && <AiGatewayForm onUpdated={() => setEditMode(null)} />}
       </div>
       <AiGatewayDelete ref={deleteRef} onDeleted={() => setEditMode(null)} />

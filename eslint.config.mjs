@@ -1,6 +1,7 @@
 import antfu from '@antfu/eslint-config'
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import tailwindcss from 'eslint-plugin-better-tailwindcss'
+import formatjs from 'eslint-plugin-formatjs'
 
 export default antfu(
   {
@@ -36,4 +37,5 @@ export default antfu(
       }],
     },
   },
+  formatjs.configs.recommended,
 )

@@ -1,0 +1,119 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "reset": "Reset",
+    "loading": "Loading...",
+    "processing": "Processing..."
+  },
+  "sidebar": {
+    "ai": "AI",
+    "gateway": "Gateway",
+    "skills": "Skills",
+    "preferences": "Preferences"
+  },
+  "aiGateway": {
+    "title": "AI Gateway",
+    "description": "Set up available AI models.",
+    "addButton": "Add AI Gateway",
+    "addFormTitle": "Add AI Gateway",
+    "updateFormTitle": "Update AI Gateway",
+    "provider": "Provider",
+    "providerPlaceholder": "Select a provider",
+    "providerAlias": "Provider Alias",
+    "providerAliasPlaceholder": "Enter provider alias (display name)",
+    "baseUrl": "Base URL",
+    "baseUrlPlaceholder": "Enter your base URL",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Enter your API key",
+    "models": "Models",
+    "modelsPlaceholder": "Select models",
+    "noModelsFound": "No models found",
+    "toastAdded": "AI Gateway {name} added",
+    "toastUpdated": "AI Gateway {name} updated",
+    "deleteTitle": "Delete AI Gateway",
+    "deleteConfirm": "Are you sure you want to delete the AI Gateway: {name}?",
+    "toastDeleted": "AI Gateway {name} deleted"
+  },
+  "skills": {
+    "title": "Skills",
+    "description": "Set up available Agent skills.",
+    "uploadZip": "Upload ZIP",
+    "uploadFolder": "Upload Folder",
+    "noSkillsInstalled": "No skills installed.",
+    "updated": "Updated:",
+    "deleteSkillTitle": "Delete Skill",
+    "deleteSkillConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "replaceSkillTitle": "Replace Skill",
+    "replaceSkillConfirm": "A skill named \"{name}\" already exists. Do you want to replace it?",
+    "replace": "Replace",
+    "skillNotFoundError": "SKILL.md not found. Please ensure the skill package contains SKILL.md",
+    "parsingSkill": "Parsing skill..."
+  },
+  "skillViewer": {
+    "title": "Skill",
+    "download": "Download",
+    "previewUnsupported": "Preview not supported for this file type",
+    "selectFileToView": "Select a file to view content"
+  },
+  "chat": {
+    "regenerate": "Regenerate",
+    "copy": "Copy",
+    "thinking": "Thinking...",
+    "error": "Error",
+    "selectModel": "Select model",
+    "searchModels": "Search models...",
+    "noModelsFound": "No models found."
+  },
+  "conversation": {
+    "noMessages": "No messages yet",
+    "noMessagesHint": "Start a conversation to see messages here"
+  },
+  "promptInput": {
+    "addAttachments": "Add photos or files",
+    "uploadFiles": "Upload files",
+    "noFilesMatch": "No files match the accepted types.",
+    "allFilesExceedSize": "All files exceed the maximum size.",
+    "tooManyFiles": "Too many files. Some were not added.",
+    "placeholder": "What would you like to know?",
+    "stop": "Stop",
+    "submit": "Submit"
+  },
+  "modelSelector": {
+    "title": "Model Selector",
+    "providerLogo": "{provider} logo"
+  },
+  "reasoning": {
+    "thinking": "Thinking...",
+    "thoughtForSeconds": "Thought for {seconds} seconds",
+    "thoughtForFewSeconds": "Thought for a few seconds"
+  },
+  "tool": {
+    "awaitingApproval": "Awaiting Approval",
+    "responded": "Responded",
+    "running": "Running",
+    "pending": "Pending",
+    "completed": "Completed",
+    "denied": "Denied",
+    "error": "Error",
+    "parameters": "Parameters",
+    "result": "Result"
+  },
+  "message": {
+    "previousBranch": "Previous branch",
+    "nextBranch": "Next branch"
+  },
+  "sidebarUi": {
+    "title": "Sidebar",
+    "description": "Displays the mobile sidebar.",
+    "toggleSidebar": "Toggle Sidebar"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "language": "Language",
+    "languageDescription": "Choose the extension language manually.",
+    "languageOptionEnglish": "English",
+    "languageOptionChinese": "简体中文"
+  }
+}

@@ -19,6 +19,7 @@
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "eslint-plugin-format": "catalog:",
+    "eslint-plugin-formatjs": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "eslint-plugin-react-refresh": "catalog:",
     "husky": "catalog:",

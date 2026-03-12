@@ -50,5 +50,11 @@
   ],
   "cSpell.words": [
     "Sidepanel"
-  ]
+  ],
+
+  "i18n-ally-next.localesPaths": ["packages/extension/src/locales"],
+  "i18n-ally-next.sourceLanguage": "en-US",
+  "i18n-ally-next.keystyle": "nested",
+  "i18n-ally-next.dirStructure": "file",
+  "i18n-ally-next.pathMatcher": "{locale}.json"
 }

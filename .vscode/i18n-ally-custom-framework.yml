@@ -1,0 +1,19 @@
+languageIds:
+  - typescript
+  - typescriptreact
+
+usageMatchRegex:
+  - "\\Wt\\(\\s*['\"`]({key})['\"`]"
+  - "\\Wi18n\\.t\\(\\s*['\"`]({key})['\"`]"
+
+refactorTemplates:
+  - "t('$1')"
+  - "{t('$1')}"
+
+namespace: true
+
+namespaceDelimiter: ':'
+
+scopeRangeRegex: "useTranslation\\(['\"](.+?)['\"]\\)"
+
+monopoly: true

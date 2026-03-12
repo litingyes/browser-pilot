@@ -14,7 +14,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useAiGateway } from '@/hooks/use-ai-gateway'
 import { useAiModels } from '@/hooks/use-ai-models'
+import { i18n } from '@/i18n'
 import { parseAiModelId } from '@/lib/ai-provider'
 import { db } from '@/lib/indexeddb'
 
@@ -126,10 +128,10 @@ export default function Chat() {
                 </MessageContent>
                 {message.role === 'assistant' && (!isLastMessage || !isLoading) && (
                   <MessageActions>
-                    <MessageAction tooltip="Regenerate" onClick={() => regenerate()}>
+                    <MessageAction tooltip={i18n.t('chat.regenerate')} onClick={() => regenerate()}>
                       <RefreshCcwIcon />
                     </MessageAction>
-                    <MessageAction tooltip="Copy" onClick={() => navigator.clipboard.writeText(message.parts.find(part => part.type === 'text')?.text ?? '')}>
+                    <MessageAction tooltip={i18n.t('chat.copy')} onClick={() => navigator.clipboard.writeText(message.parts.find(part => part.type === 'text')?.text ?? '')}>
                       <CopyIcon />
                     </MessageAction>
                   </MessageActions>
@@ -143,7 +145,7 @@ export default function Chat() {
                 <div className="flex items-center gap-2">
                   <Spinner />
                   <Shimmer>
-                    Thinking...
+                    {i18n.t('chat.thinking')}
                   </Shimmer>
                 </div>
               </MessageContent>
@@ -153,7 +155,7 @@ export default function Chat() {
             <Alert variant="destructive">
               <InfoIcon />
               <AlertTitle>
-                Error
+                {i18n.t('chat.error')}
               </AlertTitle>
               <AlertDescription>
                 {error.message}
@@ -179,7 +181,7 @@ export default function Chat() {
                         <Button className="w-fit self-start px-2.5 font-normal" size="sm" type="button" variant="outline" />
                       )}
                     >
-                      {selectedModelMetadata?.modelName ?? 'Select model'}
+                      {selectedModelMetadata?.modelName ?? i18n.t('chat.selectModel')}
                     </ModelSelectorTrigger>
                   )}
                 />
@@ -190,9 +192,9 @@ export default function Chat() {
                 )}
               </Tooltip>
               <ModelSelectorContent className="sm:max-w-2xl">
-                <ModelSelectorInput placeholder="Search models..." />
+                <ModelSelectorInput placeholder={i18n.t('chat.searchModels')} />
                 <ModelSelectorList>
-                  <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                  <ModelSelectorEmpty>{i18n.t('chat.noModelsFound')}</ModelSelectorEmpty>
                   {Object.entries(modelGroups).map(([providerName, group]) => (
                     <ModelSelectorGroup key={providerName} heading={providerName}>
                       {group.models.map(model => (

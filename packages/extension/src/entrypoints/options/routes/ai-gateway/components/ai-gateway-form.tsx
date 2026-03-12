@@ -10,6 +10,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAiGateway } from '@/hooks/use-ai-gateway'
+import { i18n } from '@/i18n'
 import { AI_GATEWAY_SCHEMA, getAiGatewayDisplayName } from '@/stores/ai-gateways'
 
 interface AiGatewayFormProps {
@@ -42,7 +43,7 @@ export default function AiGatewayForm(
       if (isAdd) {
         isSuccess = addAiGateway(value)
         if (isSuccess) {
-          toast.success(`AI Gateway ${displayName} added`)
+          toast.success(i18n.t('aiGateway.toastAdded', { name: displayName }))
         }
       }
       else {
@@ -51,7 +52,7 @@ export default function AiGatewayForm(
         }
         isSuccess = updateAiGateway(defaultValue, value)
         if (isSuccess) {
-          toast.success(`AI Gateway ${displayName} updated`)
+          toast.success(i18n.t('aiGateway.toastUpdated', { name: displayName }))
         }
       }
 
@@ -97,9 +98,7 @@ export default function AiGatewayForm(
     <Card className="w-full">
       <CardHeader>
         <CardTitle>
-          {isAdd ? 'Add' : 'Update'}
-          {' '}
-          AI Gateway
+          {isAdd ? i18n.t('aiGateway.addFormTitle') : i18n.t('aiGateway.updateFormTitle')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -120,7 +119,7 @@ export default function AiGatewayForm(
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
-                      Provider
+                      {i18n.t('aiGateway.provider')}
                     </FieldLabel>
                     <Select
                       name={field.name}
@@ -137,7 +136,7 @@ export default function AiGatewayForm(
                       }}
                     >
                       <SelectTrigger id={field.name} aria-invalid={isInvalid}>
-                        <SelectValue placeholder="Select a provider" />
+                        <SelectValue placeholder={i18n.t('aiGateway.providerPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {AI_GATEWAY_SCHEMA.shape.provider.options.filter((provider) => {
@@ -173,9 +172,9 @@ export default function AiGatewayForm(
                         return (
                           <Field data-invalid={isInvalid}>
                             <FieldLabel htmlFor={field.name}>
-                              Provider Alias
+                              {i18n.t('aiGateway.providerAlias')}
                             </FieldLabel>
-                            <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder="Enter provider alias (display name)" value={field.state.value ?? ''} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
+                            <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder={i18n.t('aiGateway.providerAliasPlaceholder')} value={field.state.value ?? ''} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
                             {isInvalid && <FieldError errors={field.state.meta.errors} />}
                           </Field>
                         )
@@ -191,9 +190,9 @@ export default function AiGatewayForm(
                         return (
                           <Field data-invalid={isInvalid}>
                             <FieldLabel htmlFor={field.name}>
-                              Base URL
+                              {i18n.t('aiGateway.baseUrl')}
                             </FieldLabel>
-                            <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder="Enter your base URL" value={field.state.value} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
+                            <Input id={field.name} name={field.name} aria-invalid={isInvalid} placeholder={i18n.t('aiGateway.baseUrlPlaceholder')} value={field.state.value} onBlur={field.handleBlur} onChange={e => field.handleChange(e.target.value)} />
                             {isInvalid && <FieldError errors={field.state.meta.errors} />}
                           </Field>
                         )
@@ -213,14 +212,14 @@ export default function AiGatewayForm(
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>
-                      API Key
+                      {i18n.t('aiGateway.apiKey')}
                     </FieldLabel>
                     <Input
                       id={field.name}
                       name={field.name}
                       aria-invalid={isInvalid}
                       type="password"
-                      placeholder="Enter your API key"
+                      placeholder={i18n.t('aiGateway.apiKeyPlaceholder')}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={e => field.handleChange(e.target.value)}
@@ -239,14 +238,14 @@ export default function AiGatewayForm(
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Models</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>{i18n.t('aiGateway.models')}</FieldLabel>
                     <Combobox items={models} multiple autoHighlight value={field.state.value ?? []} onValueChange={field.handleChange}>
                       <ComboboxChips>
                         <ComboboxValue>
                           {values => (
                             <Fragment>
                               {values.map((value: string) => (<ComboboxChip key={value}>{value}</ComboboxChip>))}
-                              <ComboboxChipsInput placeholder="Select models">
+                              <ComboboxChipsInput placeholder={i18n.t('aiGateway.modelsPlaceholder')}>
 
                               </ComboboxChipsInput>
                             </Fragment>
@@ -254,7 +253,7 @@ export default function AiGatewayForm(
                         </ComboboxValue>
                       </ComboboxChips>
                       <ComboboxContent>
-                        <ComboboxEmpty>No models found</ComboboxEmpty>
+                        <ComboboxEmpty>{i18n.t('aiGateway.noModelsFound')}</ComboboxEmpty>
                         <ComboboxList>
                           {item => (<ComboboxItem key={item} value={item}>{item}</ComboboxItem>)}
                         </ComboboxList>
@@ -273,10 +272,10 @@ export default function AiGatewayForm(
       <CardFooter>
         <Field orientation="horizontal">
           <Button type="submit" form="add-ai-gateway-form">
-            Save
+            {i18n.t('common.save')}
           </Button>
           <Button type="button" variant="outline" onClick={() => form.reset()}>
-            Reset
+            {i18n.t('common.reset')}
           </Button>
         </Field>
       </CardFooter>

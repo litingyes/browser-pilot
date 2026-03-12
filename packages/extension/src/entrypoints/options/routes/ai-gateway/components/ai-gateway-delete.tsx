@@ -12,6 +12,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { useAiGateway } from '@/hooks/use-ai-gateway'
+import { i18n } from '@/i18n'
 import { getAiGatewayDisplayName } from '@/stores/ai-gateways'
 
 interface AiGatewayDeleteProps {
@@ -36,7 +38,7 @@ export default function AiGatewayDelete(
     const isSuccess = removeAiGateway(aiGateway)
     if (isSuccess) {
       onDeleted?.(aiGateway)
-      toast.success(`AI Gateway ${displayName} deleted`)
+      toast.success(i18n.t('aiGateway.toastDeleted', { name: displayName }))
       setIsOpen(false)
     }
   }
@@ -55,24 +57,18 @@ export default function AiGatewayDelete(
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Delete AI Gateway
+            {i18n.t('aiGateway.deleteTitle')}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete the AI Gateway:
-            <span className="font-bold">
-              {' '}
-              {aiGateway ? getAiGatewayDisplayName(aiGateway) : ''}
-              {' '}
-            </span>
-            ?
+            {i18n.t('aiGateway.deleteConfirm', { name: aiGateway ? getAiGatewayDisplayName(aiGateway) : '' })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>
-            Cancel
+            {i18n.t('common.cancel')}
           </AlertDialogCancel>
           <Button variant="destructive" onClick={handleDelete}>
-            Delete
+            {i18n.t('common.delete')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

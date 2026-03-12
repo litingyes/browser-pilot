@@ -6,6 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { i18n } from '@/i18n'
 import { readFolder } from '@/lib/folder-reader'
 import { computeHash } from '@/lib/hash'
 import { db } from '@/lib/indexeddb'
@@ -84,11 +85,11 @@ export default function SkillsRoute() {
     setProgress({ current: 0, total: 1, fileName: file.name })
     try {
       const arrayBuffer = await file.arrayBuffer()
-      setProgress({ current: 1, total: 1, fileName: 'Parsing skill...' })
+      setProgress({ current: 1, total: 1, fileName: i18n.t('skills.parsingSkill') })
       const files = await unzip(arrayBuffer)
       const skill = await processSkillFiles(files)
       if (!skill) {
-        toast.error('未找到 SKILL.md 文件，请确保 skill 包中包含 SKILL.md')
+        toast.error(i18n.t('skills.skillNotFoundError'))
         return
       }
 
@@ -122,7 +123,7 @@ export default function SkillsRoute() {
       const ifsJson = await readFolder(files, p => setProgress(p))
       const skill = await processSkillFiles(ifsJson)
       if (!skill) {
-        toast.error('未找到 SKILL.md 文件，请确保 skill 包中包含 SKILL.md')
+        toast.error(i18n.t('skills.skillNotFoundError'))
         return
       }
 
@@ -174,10 +175,10 @@ export default function SkillsRoute() {
       <div className="flex flex-col gap-1">
         <h1 className="text-xl flex items-center gap-2 text-accent-foreground">
           <AgentSkills className="size-6" />
-          Skills
+          {i18n.t('skills.title')}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Set up available Agent skills.
+          {i18n.t('skills.description')}
         </p>
       </div>
 
@@ -201,14 +202,14 @@ export default function SkillsRoute() {
           onClick={() => zipInputRef.current?.click()}
           disabled={uploading}
         >
-          {uploading ? 'Processing...' : 'Upload ZIP'}
+          {uploading ? i18n.t('common.processing') : i18n.t('skills.uploadZip')}
         </Button>
         <Button
           variant="outline"
           onClick={() => folderInputRef.current?.click()}
           disabled={uploading}
         >
-          {uploading ? 'Processing...' : 'Upload Folder'}
+          {uploading ? i18n.t('common.processing') : i18n.t('skills.uploadFolder')}
         </Button>
       </div>
 
@@ -230,11 +231,11 @@ export default function SkillsRoute() {
       <div className="mt-6 flex flex-col gap-4">
         {loading
           ? (
-              <p className="text-sm text-muted-foreground">Loading...</p>
+              <p className="text-sm text-muted-foreground">{i18n.t('common.loading')}</p>
             )
           : skills.length === 0
             ? (
-                <p className="text-sm text-muted-foreground">No skills installed.</p>
+                <p className="text-sm text-muted-foreground">{i18n.t('skills.noSkillsInstalled')}</p>
               )
             : (
                 skills.map(skill => (
@@ -251,7 +252,7 @@ export default function SkillsRoute() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-xs text-muted-foreground">
-                        Updated:
+                        {i18n.t('skills.updated')}
                         {' '}
                         {formatDate(skill.updatedAt)}
                       </p>
@@ -265,7 +266,7 @@ export default function SkillsRoute() {
                           setDeleteTarget(skill)
                         }}
                       >
-                        Delete
+                        {i18n.t('common.delete')}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -276,16 +277,14 @@ export default function SkillsRoute() {
       <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Skill</AlertDialogTitle>
+            <AlertDialogTitle>{i18n.t('skills.deleteSkillTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "
-              {deleteTarget?.name}
-              "? This action cannot be undone.
+              {i18n.t('skills.deleteSkillConfirm', { name: deleteTarget?.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>{i18n.t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>{i18n.t('common.delete')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -293,16 +292,14 @@ export default function SkillsRoute() {
       <AlertDialog open={!!replaceTarget} onOpenChange={() => setReplaceTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Replace Skill</AlertDialogTitle>
+            <AlertDialogTitle>{i18n.t('skills.replaceSkillTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              A skill named "
-              {replaceTarget?.name}
-              " already exists. Do you want to replace it?
+              {i18n.t('skills.replaceSkillConfirm', { name: replaceTarget?.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReplaceConfirm}>Replace</AlertDialogAction>
+            <AlertDialogCancel>{i18n.t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleReplaceConfirm}>{i18n.t('skills.replace')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

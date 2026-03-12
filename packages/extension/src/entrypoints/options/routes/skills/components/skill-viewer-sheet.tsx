@@ -17,6 +17,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { i18n } from '@/i18n'
 import { buildFileTree, getLanguageFromExt, isTextFile } from '../lib/file-tree'
 
 interface SkillViewerSheetProps {
@@ -143,7 +144,7 @@ export function SkillViewerSheet({ skill, open, onOpenChange }: SkillViewerSheet
         className="flex w-full max-w-7xl! flex-col"
       >
         <SheetHeader>
-          <SheetTitle>{skill?.name ?? 'Skill'}</SheetTitle>
+          <SheetTitle>{skill?.name ?? i18n.t('skillViewer.title')}</SheetTitle>
         </SheetHeader>
 
         <ResizablePanelGroup orientation="horizontal">
@@ -182,7 +183,7 @@ export function SkillViewerSheet({ skill, open, onOpenChange }: SkillViewerSheet
                                   onClick={() => downloadFile(selectedPath.split('/').pop() ?? selectedPath, selectedContent)}
                                 >
                                   <DownloadIcon className="size-4" />
-                                  <span className="sr-only">Download</span>
+                                  <span className="sr-only">{i18n.t('skillViewer.download')}</span>
                                 </Button>
                               </>
                             )}
@@ -203,7 +204,7 @@ export function SkillViewerSheet({ skill, open, onOpenChange }: SkillViewerSheet
                             : selectedPath
                               ? (
                                   <p className="py-4 text-sm text-muted-foreground">
-                                    暂不支持预览此类型文件
+                                    {i18n.t('skillViewer.previewUnsupported')}
                                   </p>
                                 )
                               : null}
@@ -212,7 +213,7 @@ export function SkillViewerSheet({ skill, open, onOpenChange }: SkillViewerSheet
                     )
                   : (
                       <p className="py-4 text-sm text-muted-foreground">
-                        选择文件查看内容
+                        {i18n.t('skillViewer.selectFileToView')}
                       </p>
                     )}
               </div>

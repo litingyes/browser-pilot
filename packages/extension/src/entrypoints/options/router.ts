@@ -1,6 +1,7 @@
 import { createHashHistory, createRootRoute, createRoute, createRouter, redirect } from '@tanstack/react-router'
 import App from './App'
 import AiGateway from './routes/ai-gateway'
+import Preferences from './routes/preferences'
 import Skills from './routes/skills'
 
 const rootRoute = createRootRoute({
@@ -23,7 +24,12 @@ const skillsRoute = createRoute({
   path: '/skills',
   component: Skills,
 })
-rootRoute.addChildren([indexRoute, aiGatewayRoute, skillsRoute])
+const preferencesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/preferences',
+  component: Preferences,
+})
+rootRoute.addChildren([indexRoute, aiGatewayRoute, skillsRoute, preferencesRoute])
 
 export const router = createRouter({
   routeTree: rootRoute,

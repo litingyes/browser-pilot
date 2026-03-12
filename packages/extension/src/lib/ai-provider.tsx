@@ -62,7 +62,7 @@ function getAiProvider(model: ParsedAiModelId) {
     return createOpenAICompatible({
       name: aiGateway.providerAlias!,
       apiKey: aiGateway.apiKey,
-      baseURL: aiGateway.baseURL,
+      baseURL: aiGateway.baseURL!,
 
     })
   }
