@@ -17,6 +17,13 @@ export function initStoragesForDevelopment() {
       baseURL: import.meta.env.WXT_BAISHAN_BASE_URL,
       models: import.meta.env.WXT_BAISHAN_MODELS?.split(',') ?? [],
     },
+    {
+      provider: 'openai-compatible',
+      providerAlias: 'ark',
+      apiKey: import.meta.env.WXT_ARK_API_KEY,
+      baseURL: import.meta.env.WXT_ARK_BASE_URL,
+      models: import.meta.env.WXT_ARK_MODELS?.split(',') ?? [],
+    },
   ])
 
   storage.setItem(AI_MODELS_STORAGE_KEY, {
