@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "91c02eb706f046fb9d6a061efbb96496e4be751b5b14c283cf82baaa50f3a985"
     },
+    "tool-ui": {
+      "source": "assistant-ui/tool-ui",
+      "sourceType": "github",
+      "computedHash": "ef3b319307a8fd68cf3e29a4431c5a85990aa478d1f2632646936a778aa2ff24"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

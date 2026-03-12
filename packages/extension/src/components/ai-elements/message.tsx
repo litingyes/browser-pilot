@@ -1,8 +1,5 @@
 "use client";
 
-import type { UIMessage } from "ai";
-import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   ButtonGroup,
@@ -19,7 +16,9 @@ import { cjk } from "@streamdown/cjk";
 import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
+import type { UIMessage } from "ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
 import {
   createContext,
   memo,
@@ -102,7 +101,7 @@ export const MessageAction = ({
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger render={button}></TooltipTrigger>
+          <TooltipTrigger>{button}</TooltipTrigger>
           <TooltipContent>
             <p>{tooltip}</p>
           </TooltipContent>
@@ -335,7 +334,9 @@ export const MessageResponse = memo(
       {...props}
     />
   ),
-  (prevProps, nextProps) => prevProps.children === nextProps.children
+  (prevProps, nextProps) =>
+    prevProps.children === nextProps.children &&
+    nextProps.isAnimating === prevProps.isAnimating
 );
 
 MessageResponse.displayName = "MessageResponse";
