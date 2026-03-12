@@ -11,5 +11,6 @@ export default defineConfig({
   manifest: {
     name: 'Browser Pilot',
     permissions: ['storage'],
+    host_permissions: ['<all_urls>'],
   },
 })
