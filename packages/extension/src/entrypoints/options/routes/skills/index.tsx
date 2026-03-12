@@ -1,5 +1,6 @@
 import type { IFsJSON, Skill } from '@/lib/indexeddb'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import AgentSkills from '@/components/svgs/skills'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { computeHash } from '@/lib/hash'
 import { db } from '@/lib/indexeddb'
 import { parseSkillMeta } from '@/lib/skill-parser'
 import { unzip } from '@/lib/zip'
+import { SkillViewerSheet } from './components/skill-viewer-sheet'
 
 interface ReadProgress {
   current: number
@@ -59,6 +61,7 @@ export default function SkillsRoute() {
   const [progress, setProgress] = useState<ReadProgress | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Skill | null>(null)
   const [replaceTarget, setReplaceTarget] = useState<Skill | null>(null)
+  const [viewingSkill, setViewingSkill] = useState<Skill | null>(null)
   const zipInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -84,8 +87,10 @@ export default function SkillsRoute() {
       setProgress({ current: 1, total: 1, fileName: 'Parsing skill...' })
       const files = await unzip(arrayBuffer)
       const skill = await processSkillFiles(files)
-      if (!skill)
+      if (!skill) {
+        toast.error('未找到 SKILL.md 文件，请确保 skill 包中包含 SKILL.md')
         return
+      }
 
       const existing = await db.skills.get(skill.name)
       if (existing) {
@@ -116,8 +121,10 @@ export default function SkillsRoute() {
     try {
       const ifsJson = await readFolder(files, p => setProgress(p))
       const skill = await processSkillFiles(ifsJson)
-      if (!skill)
+      if (!skill) {
+        toast.error('未找到 SKILL.md 文件，请确保 skill 包中包含 SKILL.md')
         return
+      }
 
       const existing = await db.skills.get(skill.name)
       if (existing) {
@@ -231,11 +238,15 @@ export default function SkillsRoute() {
               )
             : (
                 skills.map(skill => (
-                  <Card key={skill.name}>
+                  <Card
+                    key={skill.name}
+                    className="cursor-pointer transition-colors hover:bg-accent/50"
+                    onClick={() => setViewingSkill(skill)}
+                  >
                     <CardHeader>
                       <CardTitle>{skill.name}</CardTitle>
                       {skill.description && (
-                        <CardDescription>{skill.description}</CardDescription>
+                        <CardDescription className="line-clamp-2">{skill.description}</CardDescription>
                       )}
                     </CardHeader>
                     <CardContent>
@@ -249,7 +260,10 @@ export default function SkillsRoute() {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => setDeleteTarget(skill)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setDeleteTarget(skill)
+                        }}
                       >
                         Delete
                       </Button>
@@ -292,6 +306,12 @@ export default function SkillsRoute() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <SkillViewerSheet
+        skill={viewingSkill}
+        open={!!viewingSkill}
+        onOpenChange={open => !open && setViewingSkill(null)}
+      />
     </div>
   )
 }
