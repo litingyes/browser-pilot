@@ -21,7 +21,7 @@ export function createAiProvider(): ProviderV3 {
           middleware: extractReasoningMiddleware({
             tagName: 'think',
             separator: '\n',
-            startWithReasoning: true,
+            startWithReasoning: false,
           }),
         })
       }

@@ -44,10 +44,6 @@ export default function Chat() {
         getModel: () => selectedModelRef.current,
         getSkills: () => db.skills.toArray(),
       },
-      sendReasoning: true,
-      sendSources: true,
-      sendStart: false,
-      sendFinish: false,
     })
   }, [])
 
