@@ -65,6 +65,7 @@
     "@types/react-dom": "catalog:",
     "@wxt-dev/module-react": "catalog:",
     "typescript": "catalog:",
+    "unplugin-turbo-console": "catalog:",
     "wxt": "catalog:"
   }
 }
