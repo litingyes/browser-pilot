@@ -1,9 +1,16 @@
 import { remark } from 'remark'
 import remarkFrontmatter from 'remark-frontmatter'
 
+const FRONTMATTER_RE = /^---\r?\n[\s\S]*?\r?\n---\r?\n?/
+
 export interface ParsedSkillMeta {
   name: string
   description: string
+}
+
+export function stripFrontmatter(content: string): string {
+  const match = content.match(FRONTMATTER_RE)
+  return match ? content.slice(match[0].length).trim() : content.trim()
 }
 
 export async function parseSkillMeta(content: string): Promise<ParsedSkillMeta> {

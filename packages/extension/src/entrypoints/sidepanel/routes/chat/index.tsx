@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { useAiModels } from '@/hooks/use-ai-models'
 import { parseAiModelId } from '@/lib/ai-provider'
+import { db } from '@/lib/indexeddb'
 
 export default function Chat() {
   const { modelForSidepanelChat, setAiModel } = useAiModels()
@@ -32,6 +33,7 @@ export default function Chat() {
       agent: assistant,
       options: {
         getModel: () => selectedModelRef.current,
+        getSkills: () => db.skills.toArray(),
       },
       sendReasoning: true,
       sendSources: true,
@@ -84,6 +86,7 @@ export default function Chat() {
 
                     if (part.type === 'text') {
                       return (
+                        // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
                         <MessageResponse key={`${message.id}-${part.type}-${partIndex}`}>
                           {part.text}
                         </MessageResponse>
@@ -91,6 +94,7 @@ export default function Chat() {
                     }
                     else if (part.type === 'reasoning') {
                       return (
+                        // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
                         <Reasoning key={`${message.id}-${part.type}-${partIndex}`} isStreaming={status === 'streaming' && isLastMessage && isLastPart}>
                           <ReasoningTrigger />
                           <ReasoningContent>
