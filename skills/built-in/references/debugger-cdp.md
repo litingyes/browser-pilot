@@ -2,6 +2,8 @@
 
 This document covers actions for working with the Chrome DevTools Protocol (CDP) and debugger.
 
+For standard navigation and tab control, prefer high-level actions (`NAVIGATE`, `TAB_LIST`, `TAB_NEW`, `TAB_SWITCH`, `TAB_CLOSE`) instead of `SEND_CDP`.
+
 ---
 
 ## ATTACH_DEBUGGER
@@ -47,7 +49,7 @@ const result = await dispatchAction('SEND_CDP', {
 console.log('Page title:', result.result.value);
 ```
 
-**Navigate to URL with CDP:**
+**Navigate to URL with CDP (fallback only):**
 ```typescript
 await dispatchAction('SEND_CDP', {
   method: 'Page.navigate',

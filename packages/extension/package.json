@@ -5,10 +5,11 @@
   "private": true,
   "description": "A AI-based browser extension.",
   "scripts": {
+    "generate-skill-action-index": "tsx scripts/generate-skill-action-index.ts",
     "zip-skills": "tsx scripts/zip-skills.ts",
-    "dev": "npm run zip-skills && wxt",
-    "build": "npm run zip-skills && wxt build",
-    "zip": "npm run zip-skills && wxt zip",
+    "dev": "npm run generate-skill-action-index && npm run zip-skills && wxt",
+    "build": "npm run generate-skill-action-index && npm run zip-skills && wxt build",
+    "zip": "npm run generate-skill-action-index && npm run zip-skills && wxt zip",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare"
   },

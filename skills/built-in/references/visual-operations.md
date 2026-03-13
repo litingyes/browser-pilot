@@ -1,61 +1,54 @@
 # Visual Operations
 
-This document covers actions for capturing visual evidence and screenshots.
+This document covers screenshot capture actions.
 
 ---
 
 ## TAKE_SCREENSHOT
-Capture a screenshot of the current page or viewport.
+Capture a screenshot of page, full page, or specific element.
 
-**Parameters:**
-- `format` (optional): 'png' | 'jpeg' | 'webp' (default: 'png')
-- `quality` (optional): number (0-100, for jpeg/webp formats, default: 80)
-- `fullPage` (optional): boolean (Capture full scrollable page, default: false)
-- `selectorOrRef` (optional): string (Capture only the specified element)
-- `clip` (optional): object (Crop screenshot to region: { x: number, y: number, width: number, height: number })
-- `omitBackground` (optional): boolean (Make background transparent for PNG, default: false)
+**Command shape:**
+- `action: 'TAKE_SCREENSHOT'`
+- `options?: {`
+  - `selector?: string` (supports CSS selector or `@eX` ref)
+  - `path?: string`
+  - `fullPage?: boolean`
+  - `format?: 'png' | 'jpeg'`
+  - `quality?: number` (jpeg only)
+- `}`
 
 **Returns:**
-string - Base64 encoded image data.
+- `{ path: string, data: string, dataUrl: string }`
+- `data` is base64 image data.
 
 **Usage Examples:**
 
 **Full Page Screenshot:**
 ```typescript
 const fullPageScreenshot = await dispatchAction('TAKE_SCREENSHOT', {
-  fullPage: true,
-  format: 'png'
+  options: {
+    fullPage: true,
+    format: 'png',
+  },
 }, tabId);
 ```
 
 **Element Screenshot:**
 ```typescript
 const componentScreenshot = await dispatchAction('TAKE_SCREENSHOT', {
-  selectorOrRef: '.dashboard-card',
-  format: 'jpeg',
-  quality: 90
-}, tabId);
-```
-
-**Viewport Screenshot with Custom Clip:**
-```typescript
-const croppedScreenshot = await dispatchAction('TAKE_SCREENSHOT', {
-  clip: {
-    x: 100,
-    y: 200,
-    width: 800,
-    height: 600
+  options: {
+    selector: '@e12',
+    format: 'jpeg',
+    quality: 90,
   },
-  format: 'webp'
 }, tabId);
 ```
 
 ## Best Practices
 
-1. **Use Appropriate Format:**
-   - Use PNG for screenshots requiring transparency or sharp text
-   - Use JPEG for large screenshots where file size is a concern
-   - Use WebP for optimal compression with good quality
+1. **Use Supported Format:**
+   - PNG for lossless text/UI
+   - JPEG for smaller files
 
 2. **Evidence Capture:**
    - Always capture full page screenshots for bug reports or audit trails
@@ -72,8 +65,10 @@ const croppedScreenshot = await dispatchAction('TAKE_SCREENSHOT', {
    import fs from 'fs/promises';
    import { Buffer } from 'node:buffer';
 
-   const screenshot = await dispatchAction('TAKE_SCREENSHOT', { fullPage: true }, tabId);
-   const buffer = Buffer.from(screenshot, 'base64');
+   const screenshot = await dispatchAction('TAKE_SCREENSHOT', {
+     options: { fullPage: true }
+   }, tabId);
+   const buffer = Buffer.from(screenshot.data, 'base64');
    await fs.writeFile('screenshot.png', buffer);
    ```
 

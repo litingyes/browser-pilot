@@ -1,4 +1,16 @@
 import type { Command } from './types'
+import {
+  getContent,
+  getTitle,
+  getUrl,
+  isConnectionAlive,
+  navigate,
+  tabClose,
+  tabList,
+  tabNew,
+  tabSwitch,
+  toFriendlyErrorMessage,
+} from './browser'
 import { clearCookies, getCookies, setCookies } from './cookie'
 import { attachDebugger, sendCdp } from './debugger'
 import {
@@ -63,6 +75,29 @@ export async function dispatchAction(command: Command) {
   }
 
   switch (command.action) {
+    case 'NAVIGATE':
+      try {
+        return await navigate(command.typeId, command.url, command.waitUntil)
+      }
+      catch (error) {
+        throw new Error(toFriendlyErrorMessage(error))
+      }
+    case 'GET_URL':
+      return getUrl(command.typeId)
+    case 'GET_TITLE':
+      return getTitle(command.typeId)
+    case 'GET_CONTENT':
+      return getContent(command.typeId)
+    case 'TAB_LIST':
+      return tabList(command.typeId)
+    case 'TAB_NEW':
+      return tabNew(command.typeId, command.url)
+    case 'TAB_SWITCH':
+      return tabSwitch(command.typeId, command.index)
+    case 'TAB_CLOSE':
+      return tabClose(command.typeId, command.index)
+    case 'IS_CONNECTION_ALIVE':
+      return isConnectionAlive(command.typeId)
     case 'GET_COOKIES':
       return getCookies(command.typeId, command.urls)
     case 'SET_COOKIES':

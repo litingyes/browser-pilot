@@ -8,6 +8,15 @@ import { createAiProvider } from '@/lib/ai-provider'
 import { buildSkillsPrompt, getSkillContent } from '@/lib/skills'
 
 const browserUseActionSchema = z.enum([
+  'NAVIGATE',
+  'GET_URL',
+  'GET_TITLE',
+  'GET_CONTENT',
+  'TAB_LIST',
+  'TAB_NEW',
+  'TAB_SWITCH',
+  'TAB_CLOSE',
+  'IS_CONNECTION_ALIVE',
   'GET_COOKIES',
   'SET_COOKIES',
   'CLEAR_COOKIES',
@@ -62,7 +71,41 @@ const browserUseActionSchema = z.enum([
 const browserUseDispatchInputSchema = z.object({
   action: browserUseActionSchema.describe('Browser-use action to dispatch'),
   tabId: z.number().int().nonnegative().optional().describe('Optional target tab id, defaults to active tab'),
-})
+  url: z.string().optional(),
+  waitUntil: z.enum(['load', 'domcontentloaded', 'networkidle']).optional(),
+  index: z.number().int().optional(),
+  selectorOrRef: z.string().optional(),
+  selector: z.string().optional(),
+  method: z.string().optional(),
+  params: z.record(z.string(), z.unknown()).optional(),
+  button: z.enum(['left', 'right', 'middle']).optional(),
+  clickCount: z.number().int().positive().optional(),
+  value: z.string().optional(),
+  text: z.string().optional(),
+  clear: z.boolean().optional(),
+  delayMs: z.number().int().nonnegative().optional(),
+  key: z.string().optional(),
+  options: z.object({
+    selectorOrRef: z.string().optional(),
+    deltaX: z.number(),
+    deltaY: z.number(),
+  }).optional(),
+  values: z.array(z.string()).optional(),
+  eventType: z.string().optional(),
+  eventInit: z.record(z.string(), z.unknown()).optional(),
+  path: z.string().optional(),
+  frameData: z.any().optional(),
+  storageType: z.enum(['local', 'session']).optional(),
+  urls: z.array(z.string()).optional(),
+  cookies: z.array(z.record(z.string(), z.unknown())).optional(),
+  currentUrl: z.string().optional(),
+  attribute: z.string().optional(),
+  input: z.string().optional(),
+  properties: z.array(z.string()).optional(),
+  state: z.record(z.string(), z.unknown()).optional(),
+  quality: z.number().int().min(0).max(100).optional(),
+  fullPage: z.boolean().optional(),
+}).passthrough()
 
 interface AssistantContext {
   skills: Skill[]

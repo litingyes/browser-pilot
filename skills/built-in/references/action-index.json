@@ -1,0 +1,241 @@
+{
+  "generatedAt": "2026-03-13T17:19:19.681Z",
+  "source": "packages/extension/src/browser-use/types.ts",
+  "totalActions": 58,
+  "undocumented": [],
+  "extraMappings": [],
+  "actions": [
+    {
+      "action": "ATTACH_DEBUGGER",
+      "reference": "references/debugger-cdp.md"
+    },
+    {
+      "action": "CHECK",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "CLEAR",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "CLEAR_COOKIES",
+      "reference": "references/cookie-management.md"
+    },
+    {
+      "action": "CLEAR_STORAGE",
+      "reference": "references/storage-management.md"
+    },
+    {
+      "action": "CLICK",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "DBLCLICK",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "DISPATCH_EVENT",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "ENSURE_TAB_STATE",
+      "reference": "references/snapshot-refs.md"
+    },
+    {
+      "action": "FILL",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "FOCUS",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "GET_CONTENT",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "GET_COOKIES",
+      "reference": "references/cookie-management.md"
+    },
+    {
+      "action": "GET_ELEMENT_ATTRIBUTE",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_BOUNDING_BOX",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_COUNT",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_INNER_HTML",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_INNER_TEXT",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_INPUT_VALUE",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_STYLES",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_ELEMENT_TEXT",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "GET_LAST_RECORDING_FRAMES",
+      "reference": "references/recording.md"
+    },
+    {
+      "action": "GET_SNAPSHOT",
+      "reference": "references/snapshot-refs.md"
+    },
+    {
+      "action": "GET_STORAGE",
+      "reference": "references/storage-management.md"
+    },
+    {
+      "action": "GET_TITLE",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "GET_URL",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "HIGHLIGHT",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "HOVER",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "IS_CONNECTION_ALIVE",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "IS_ELEMENT_CHECKED",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "IS_ELEMENT_ENABLED",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "IS_ELEMENT_VISIBLE",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "NAVIGATE",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "PARSE_REF",
+      "reference": "references/snapshot-refs.md"
+    },
+    {
+      "action": "PRESS_KEY",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "RECORDING_ADD_FRAME",
+      "reference": "references/recording.md"
+    },
+    {
+      "action": "RECORDING_RESTART",
+      "reference": "references/recording.md"
+    },
+    {
+      "action": "RECORDING_START",
+      "reference": "references/recording.md"
+    },
+    {
+      "action": "RECORDING_STOP",
+      "reference": "references/recording.md"
+    },
+    {
+      "action": "RESOLVE_ELEMENT_CENTER",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "RESOLVE_ELEMENT_OBJECT_ID",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "SCROLL",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "SCROLL_INTO_VIEW",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "SELECT_ALL",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "SELECT_OPTION",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "SEND_CDP",
+      "reference": "references/debugger-cdp.md"
+    },
+    {
+      "action": "SET_COOKIES",
+      "reference": "references/cookie-management.md"
+    },
+    {
+      "action": "SET_ELEMENT_VALUE",
+      "reference": "references/element-queries.md"
+    },
+    {
+      "action": "SET_STORAGE",
+      "reference": "references/storage-management.md"
+    },
+    {
+      "action": "TAB_CLOSE",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "TAB_LIST",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "TAB_NEW",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "TAB_SWITCH",
+      "reference": "references/browser-orchestration.md"
+    },
+    {
+      "action": "TAKE_SCREENSHOT",
+      "reference": "references/visual-operations.md"
+    },
+    {
+      "action": "TAP_TOUCH",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "TYPE_TEXT",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "UNCHECK",
+      "reference": "references/element-interactions.md"
+    },
+    {
+      "action": "UPDATE_TAB_STATE",
+      "reference": "references/snapshot-refs.md"
+    }
+  ]
+}

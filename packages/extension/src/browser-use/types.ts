@@ -32,6 +32,47 @@ export type SendCdpCommand = BaseCommand & {
   params?: Record<string, unknown>
 }
 
+export type NavigateCommand = BaseCommand & {
+  action: 'NAVIGATE'
+  url: string
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle'
+}
+
+export type GetUrlCommand = BaseCommand & {
+  action: 'GET_URL'
+}
+
+export type GetTitleCommand = BaseCommand & {
+  action: 'GET_TITLE'
+}
+
+export type GetContentCommand = BaseCommand & {
+  action: 'GET_CONTENT'
+}
+
+export type TabListCommand = BaseCommand & {
+  action: 'TAB_LIST'
+}
+
+export type TabNewCommand = BaseCommand & {
+  action: 'TAB_NEW'
+  url?: string
+}
+
+export type TabSwitchCommand = BaseCommand & {
+  action: 'TAB_SWITCH'
+  index: number
+}
+
+export type TabCloseCommand = BaseCommand & {
+  action: 'TAB_CLOSE'
+  index?: number
+}
+
+export type IsConnectionAliveCommand = BaseCommand & {
+  action: 'IS_CONNECTION_ALIVE'
+}
+
 export type ParseRefCommand = BaseCommand & {
   action: 'PARSE_REF'
   input: string
@@ -267,4 +308,4 @@ export type ClearStorageCommand = BaseCommand & {
   storageType?: StorageType
 }
 
-export type Command = GetCookiesCommand | SetCookiesCommand | ClearCookiesCommand | AttachDebuggerCommand | SendCdpCommand | ParseRefCommand | ResolveElementCenterCommand | ResolveElementObjectIdCommand | GetElementTextCommand | GetElementAttributeCommand | IsElementVisibleCommand | IsElementEnabledCommand | IsElementCheckedCommand | GetElementInnerTextCommand | GetElementInnerHtmlCommand | GetElementInputValueCommand | SetElementValueCommand | GetElementBoundingBoxCommand | GetElementCountCommand | GetElementStylesCommand | ClickCommand | DblclickCommand | HoverCommand | FillCommand | TypeTextCommand | PressKeyCommand | ScrollCommand | SelectOptionCommand | CheckCommand | UncheckCommand | FocusCommand | ClearCommand | SelectAllCommand | ScrollIntoViewCommand | DispatchEventCommand | HighlightCommand | TapTouchCommand | RecordingStartCommand | RecordingAddFrameCommand | RecordingStopCommand | RecordingRestartCommand | GetLastRecordingFramesCommand | TakeScreenshotCommand | GetSnapshotCommand | EnsureTabStateCommand | UpdateTabStateCommand | GetStorageCommand | SetStorageCommand | ClearStorageCommand
+export type Command = GetCookiesCommand | SetCookiesCommand | ClearCookiesCommand | AttachDebuggerCommand | SendCdpCommand | NavigateCommand | GetUrlCommand | GetTitleCommand | GetContentCommand | TabListCommand | TabNewCommand | TabSwitchCommand | TabCloseCommand | IsConnectionAliveCommand | ParseRefCommand | ResolveElementCenterCommand | ResolveElementObjectIdCommand | GetElementTextCommand | GetElementAttributeCommand | IsElementVisibleCommand | IsElementEnabledCommand | IsElementCheckedCommand | GetElementInnerTextCommand | GetElementInnerHtmlCommand | GetElementInputValueCommand | SetElementValueCommand | GetElementBoundingBoxCommand | GetElementCountCommand | GetElementStylesCommand | ClickCommand | DblclickCommand | HoverCommand | FillCommand | TypeTextCommand | PressKeyCommand | ScrollCommand | SelectOptionCommand | CheckCommand | UncheckCommand | FocusCommand | ClearCommand | SelectAllCommand | ScrollIntoViewCommand | DispatchEventCommand | HighlightCommand | TapTouchCommand | RecordingStartCommand | RecordingAddFrameCommand | RecordingStopCommand | RecordingRestartCommand | GetLastRecordingFramesCommand | TakeScreenshotCommand | GetSnapshotCommand | EnsureTabStateCommand | UpdateTabStateCommand | GetStorageCommand | SetStorageCommand | ClearStorageCommand

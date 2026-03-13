@@ -1,6 +1,6 @@
 ---
 name: built-in-browser-automation
-description: Drive browser tabs with dispatchAction for snapshotting, element queries, DOM interactions, storage management, cookie operations, debugger CDP access, and session recording. Use when tasks require direct browser automation, web page interaction, or tab control through the browser MCP server.
+description: Drive browser tabs with dispatchAction for navigation, tab orchestration, snapshotting, element queries/interactions, visual capture, cookies/storage, debugger CDP access, and lightweight session recording. Use when tasks require direct browser automation in the current Chrome tab context.
 ---
 
 # Built-in Browser Automation Skills
@@ -11,6 +11,7 @@ This is the root index for all built-in browser automation capabilities. Use thi
 
 | Category | Description | Reference File |
 |----------|-------------|----------------|
+| Browser Orchestration | Navigate pages, read page info, manage tabs, and check debugger connectivity | [references/browser-orchestration.md](references/browser-orchestration.md) |
 | Snapshot & Reference Management | Capture page structure, resolve element references, manage tab state | [references/snapshot-refs.md](references/snapshot-refs.md) |
 | Element Query & Read Operations | Extract text, attributes, state, and properties from DOM elements | [references/element-queries.md](references/element-queries.md) |
 | Element Interaction | Click, type, fill forms, scroll, and manipulate page elements | [references/element-interactions.md](references/element-interactions.md) |
@@ -23,28 +24,29 @@ This is the root index for all built-in browser automation capabilities. Use thi
 ## Preconditions
 
 1. **Browser Tab ID**: Ensure `typeId` is set to the target browser tab ID
-2. **Element References**: Always prefer `selectorOrRef` values from a recent `GET_SNAPSHOT` result
-3. **Debugger Attachment**: Use `ATTACH_DEBUGGER` before any actions requiring CDP connectivity
+2. **Navigation First**: Prefer `NAVIGATE` for page loads instead of raw `SEND_CDP` calls
+3. **Element References**: Always prefer `selectorOrRef` values from a recent `GET_SNAPSHOT` result
 4. **CDP Risk**: Treat `SEND_CDP` as high-risk - only use when standard actions cannot solve the task
 
 ## Recommended Workflow
 
 ```mermaid
 flowchart LR
-    A[Start] --> B[GET_SNAPSHOT to capture page state]
-    B --> C[Query element state/attributes]
-    C --> D[Execute interactions: CLICK, TYPE_TEXT, etc.]
-    D --> E[Wait for page updates]
+    A[Start] --> B[NAVIGATE or TAB_SWITCH]
+    B --> C[GET_SNAPSHOT to capture page state]
+    C --> D[Query element state/attributes]
+    D --> E[Execute interactions]
     E --> F[GET_SNAPSHOT to verify changes]
     F --> G{Task complete?}
-    G -->|No| C
-    G -->|Yes| H[TAKE_SCREENSHOT for evidence if needed]
+    G -->|No| D
+    G -->|Yes| H[TAKE_SCREENSHOT if evidence needed]
     H --> I[End]
 ```
 
 ## Guardrails & Best Practices
 
 - **Minimal Commands**: Keep automation sequences minimal and deterministic
+- **High-level First**: Prefer dedicated actions (`NAVIGATE`, `TAB_*`, `GET_*`) before falling back to `SEND_CDP`
 - **Ref Validity**: Always re-snapshot after page navigation or significant content changes before reusing old element references
 - **CDP Usage**: Avoid raw `SEND_CDP` commands unless absolutely necessary - prefer higher-level actions
 - **Error Handling**: Check action results and validate state changes after each operation
@@ -52,4 +54,6 @@ flowchart LR
 
 ## Additional Resources
 
-For detailed usage examples and parameter specifications, refer to the individual category documentation files linked above. Each file contains complete action definitions, parameter requirements, and usage examples.
+For detailed usage examples and parameter specifications, refer to the individual category documentation files linked above.
+
+- Machine-readable action-to-doc index: [references/action-index.json](references/action-index.json)
