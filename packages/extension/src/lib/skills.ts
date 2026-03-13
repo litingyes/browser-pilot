@@ -13,7 +13,7 @@ export function buildSkillsPrompt(skills: Skill[]): string {
 
 ## Skills
 
-Use the \`loadSkill\` tool when the user's request would benefit from specialized instructions.
+Use the \`skill-load\` tool when the user's request would benefit from specialized instructions.
 
 Available skills:
 ${skillsList}

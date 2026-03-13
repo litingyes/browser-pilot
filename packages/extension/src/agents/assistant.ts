@@ -1,145 +1,19 @@
-import type { Command } from '@/browser-use/types'
 import type { AiModelId } from '@/lib/ai-provider'
 import type { Skill } from '@/lib/indexeddb'
-import { tool, ToolLoopAgent } from 'ai'
+import { ToolLoopAgent } from 'ai'
 import { z } from 'zod'
-import { dispatchAction } from '@/browser-use'
 import { createAiProvider } from '@/lib/ai-provider'
-import { buildSkillsPrompt, getSkillContent } from '@/lib/skills'
-
-const browserUseActionSchema = z.enum([
-  'NAVIGATE',
-  'GET_URL',
-  'GET_TITLE',
-  'GET_CONTENT',
-  'TAB_LIST',
-  'TAB_NEW',
-  'TAB_SWITCH',
-  'TAB_CLOSE',
-  'IS_CONNECTION_ALIVE',
-  'GET_COOKIES',
-  'SET_COOKIES',
-  'CLEAR_COOKIES',
-  'ATTACH_DEBUGGER',
-  'SEND_CDP',
-  'PARSE_REF',
-  'RESOLVE_ELEMENT_CENTER',
-  'RESOLVE_ELEMENT_OBJECT_ID',
-  'GET_ELEMENT_TEXT',
-  'GET_ELEMENT_ATTRIBUTE',
-  'IS_ELEMENT_VISIBLE',
-  'IS_ELEMENT_ENABLED',
-  'IS_ELEMENT_CHECKED',
-  'GET_ELEMENT_INNER_TEXT',
-  'GET_ELEMENT_INNER_HTML',
-  'GET_ELEMENT_INPUT_VALUE',
-  'SET_ELEMENT_VALUE',
-  'GET_ELEMENT_BOUNDING_BOX',
-  'GET_ELEMENT_COUNT',
-  'GET_ELEMENT_STYLES',
-  'CLICK',
-  'DBLCLICK',
-  'HOVER',
-  'FILL',
-  'TYPE_TEXT',
-  'PRESS_KEY',
-  'SCROLL',
-  'SELECT_OPTION',
-  'CHECK',
-  'UNCHECK',
-  'FOCUS',
-  'CLEAR',
-  'SELECT_ALL',
-  'SCROLL_INTO_VIEW',
-  'DISPATCH_EVENT',
-  'HIGHLIGHT',
-  'TAP_TOUCH',
-  'RECORDING_START',
-  'RECORDING_ADD_FRAME',
-  'RECORDING_STOP',
-  'RECORDING_RESTART',
-  'GET_LAST_RECORDING_FRAMES',
-  'TAKE_SCREENSHOT',
-  'GET_SNAPSHOT',
-  'ENSURE_TAB_STATE',
-  'UPDATE_TAB_STATE',
-  'GET_STORAGE',
-  'SET_STORAGE',
-  'CLEAR_STORAGE',
-])
-
-const browserUseDispatchInputSchema = z.looseObject({
-  action: browserUseActionSchema.describe('Browser-use action to dispatch'),
-  tabId: z.number().int().nonnegative().optional().describe('Optional target tab id, defaults to active tab'),
-})
-
-interface AssistantContext {
-  skills: Skill[]
-  getActiveTabId: () => Promise<number>
-}
-
-const loadSkillTool = tool({
-  description: 'Load a skill to get specialized instructions for a task',
-  inputSchema: z.object({
-    name: z.string().describe('The skill name to load'),
-  }),
-  execute: async (
-    { name },
-    { experimental_context },
-  ) => {
-    const { skills } = (experimental_context ?? {}) as AssistantContext
-    if (!skills?.length)
-      return { error: 'No skills available' }
-
-    const skill = skills.find(s => s.name.toLowerCase() === name.toLowerCase())
-    if (!skill)
-      return { error: `Skill '${name}' not found` }
-
-    const result = getSkillContent(skill)
-    return result
-  },
-})
-
-const browserUseDispatchTool = tool({
-  description: 'Dispatch browser-use actions to automate the current or specified tab. Includes high-privilege SEND_CDP.',
-  inputSchema: browserUseDispatchInputSchema,
-  execute: async (input, { experimental_context }) => {
-    const { getActiveTabId } = (experimental_context ?? {}) as AssistantContext
-    if (typeof getActiveTabId !== 'function') {
-      return { ok: false, error: 'No active-tab resolver available in context' }
-    }
-
-    const tabId = input.tabId ?? await getActiveTabId()
-    if (!Number.isInteger(tabId) || tabId < 0) {
-      return { ok: false, error: `Invalid tab id: ${tabId}` }
-    }
-    const { tabId: _tabId, ...commandInput } = input
-    const command = {
-      id: crypto.randomUUID(),
-      typeId: tabId,
-      ...commandInput,
-    } as Command
-
-    try {
-      const data = await dispatchAction(command)
-      return { ok: true, data }
-    }
-    catch (error) {
-      return {
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      }
-    }
-  },
-})
+import { buildSkillsPrompt } from '@/lib/skills'
+import { browserUseTool } from '@/tools/browser-use'
+import { skillLoadTool } from '@/tools/load-skill'
 
 export const assistant = new ToolLoopAgent({
   id: 'Assistant',
   instructions: 'You are a helpful assistant.',
   model: 'default',
   tools: {
-    loadSkill: loadSkillTool,
-    browserUseDispatch: browserUseDispatchTool,
+    skill: skillLoadTool,
+    browserUseDispatch: browserUseTool,
   },
   callOptionsSchema: z.object({
     getModel: z.function({
