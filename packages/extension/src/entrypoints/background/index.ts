@@ -1,5 +1,7 @@
 import type { AI_MODELS } from '@/stores/ai-models'
 import { storage } from '#imports'
+import { initBrowserUsePolicy } from '@/lib/browser-use-policy'
+import { initBuiltinSkills } from '@/lib/builtin-skills'
 import { AI_GATEWAY_STORAGE_KEY } from '@/stores/ai-gateways'
 import { AI_MODELS_STORAGE_KEY } from '@/stores/ai-models'
 
@@ -32,6 +34,14 @@ function initStoragesForDevelopment() {
 }
 
 export default defineBackground(() => {
+  initBrowserUsePolicy().catch((error) => {
+    console.error('Failed to initialize browser-use policy:', error)
+  })
+
+  initBuiltinSkills().catch((error) => {
+    console.error('Failed to initialize builtin skills:', error)
+  })
+
   if (import.meta.env.DEV) {
     initStoragesForDevelopment()
   }

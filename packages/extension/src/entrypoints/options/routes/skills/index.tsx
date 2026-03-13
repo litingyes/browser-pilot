@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { i18n } from '@/i18n'
+import { isReservedBuiltinSkillName } from '@/lib/builtin-skills'
 import { readFolder } from '@/lib/folder-reader'
 import { computeHash } from '@/lib/hash'
 import { db } from '@/lib/indexeddb'
@@ -92,6 +93,10 @@ export default function SkillsRoute() {
         toast.error(i18n.t('skills.skillNotFoundError'))
         return
       }
+      if (isReservedBuiltinSkillName(skill.name)) {
+        toast.error(i18n.t('skills.reservedSkillNameError', { name: skill.name }))
+        return
+      }
 
       const existing = await db.skills.get(skill.name)
       if (existing) {
@@ -124,6 +129,10 @@ export default function SkillsRoute() {
       const skill = await processSkillFiles(ifsJson)
       if (!skill) {
         toast.error(i18n.t('skills.skillNotFoundError'))
+        return
+      }
+      if (isReservedBuiltinSkillName(skill.name)) {
+        toast.error(i18n.t('skills.reservedSkillNameError', { name: skill.name }))
         return
       }
 

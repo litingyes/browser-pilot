@@ -1,3 +1,4 @@
+import type { ToolPart } from '@/components/ai-elements/tool'
 import type { AiGateway } from '@/stores/ai-gateways'
 import { useChat } from '@ai-sdk/react'
 import { DirectChatTransport } from 'ai'
@@ -10,6 +11,7 @@ import { ModelSelector, ModelSelectorContent, ModelSelectorEmpty, ModelSelectorG
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, PromptInputTools } from '@/components/ai-elements/prompt-input'
 import { Reasoning, ReasoningContent, ReasoningTrigger } from '@/components/ai-elements/reasoning'
 import { Shimmer } from '@/components/ai-elements/shimmer'
+import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
@@ -19,6 +21,53 @@ import { useAiModels } from '@/hooks/use-ai-models'
 import { i18n } from '@/i18n'
 import { parseAiModelId } from '@/lib/ai-provider'
 import { db } from '@/lib/indexeddb'
+
+const NON_DEBUGGABLE_TAB_URL_PREFIXES = [
+  'chrome://',
+  'edge://',
+  'about:',
+  'devtools://',
+  'chrome-extension://',
+  'moz-extension://',
+]
+
+function isDebuggableTab(tab: Browser.tabs.Tab | undefined) {
+  if (!tab || typeof tab.id !== 'number') {
+    return false
+  }
+
+  const url = (tab.url ?? '').toLowerCase()
+  if (!url) {
+    return true
+  }
+
+  return !NON_DEBUGGABLE_TAB_URL_PREFIXES.some(prefix => url.startsWith(prefix))
+}
+
+async function resolveActiveDebuggableTabId() {
+  const candidates = [
+    ...(await browser.tabs.query({ active: true, currentWindow: true })),
+    ...(await browser.tabs.query({ active: true, lastFocusedWindow: true })),
+  ]
+
+  const uniqueCandidates = [...new Map(candidates.map(tab => [tab.id, tab])).values()]
+  const targetTab = uniqueCandidates.find(isDebuggableTab)
+  if (typeof targetTab?.id === 'number') {
+    return targetTab.id
+  }
+
+  const fallbackTabs = await browser.tabs.query({ currentWindow: true })
+  const fallbackTab = fallbackTabs.find(isDebuggableTab)
+  if (typeof fallbackTab?.id === 'number') {
+    return fallbackTab.id
+  }
+
+  throw new Error('当前浏览器调试器附加失败：未找到可操作的活动标签页。请先打开目标网页并保持其为激活状态后重试，或直接提供 tabId。')
+}
+
+function isToolPart(part: { type: string }): part is ToolPart {
+  return part.type === 'dynamic-tool' || part.type.startsWith('tool-')
+}
 
 export default function Chat() {
   const { modelForSidepanelChat, setAiModel } = useAiModels()
@@ -45,6 +94,7 @@ export default function Chat() {
       options: {
         getModel: () => selectedModelRef.current,
         getSkills: () => db.skills.toArray(),
+        getActiveTabId: resolveActiveDebuggableTabId,
       },
     })
   }, [])
@@ -120,6 +170,26 @@ export default function Chat() {
                             {part.text}
                           </ReasoningContent>
                         </Reasoning>
+                      )
+                    }
+                    else if (isToolPart(part)) {
+                      const isCompleted = part.state === 'output-available' || part.state === 'output-denied' || part.state === 'output-error'
+
+                      return (
+                        // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
+                        <Tool key={`${message.id}-${part.type}-${partIndex}`} defaultOpen={!isCompleted}>
+                          {part.type === 'dynamic-tool'
+                            ? (
+                                <ToolHeader state={part.state} toolName={part.toolName} type={part.type} />
+                              )
+                            : (
+                                <ToolHeader state={part.state} type={part.type} />
+                              )}
+                          <ToolContent>
+                            <ToolInput input={part.input ?? {}} />
+                            <ToolOutput errorText={part.errorText} output={part.output} />
+                          </ToolContent>
+                        </Tool>
                       )
                     }
 

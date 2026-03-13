@@ -49,6 +49,7 @@
     "replaceSkillConfirm": "A skill named \"{name}\" already exists. Do you want to replace it?",
     "replace": "Replace",
     "skillNotFoundError": "SKILL.md not found. Please ensure the skill package contains SKILL.md",
+    "reservedSkillNameError": "The skill name \"{name}\" is reserved by a built-in skill and cannot be installed.",
     "parsingSkill": "Parsing skill..."
   },
   "skillViewer": {
@@ -114,6 +115,21 @@
     "language": "Language",
     "languageDescription": "Choose the extension language manually.",
     "languageOptionEnglish": "English",
-    "languageOptionChinese": "简体中文"
+    "languageOptionChinese": "简体中文",
+    "browserUsePolicyTitle": "Browser-use Policy",
+    "browserUsePolicyDescription": "Control safety policy for browser-use tool calls. Changes are stored in IndexedDB.",
+    "browserUsePolicySaved": "Browser-use policy saved",
+    "requireConfirmationForSendCdp": "Require confirmation before SEND_CDP",
+    "requireConfirmationForSendCdpDescription": "If enabled, chat will stop and ask for confirmation before running SEND_CDP.",
+    "allowAgentTabIdOverride": "Allow agent-provided tabId override",
+    "allowAgentTabIdOverrideDescription": "If disabled, browser-use actions can only run against the current active tab.",
+    "blockMethodPrefixes": "Blocked CDP method prefixes",
+    "blockMethodPrefixesDescription": "One prefix per line. Methods that start with these prefixes are blocked.",
+    "blockMethods": "Blocked CDP methods",
+    "blockMethodsDescription": "One full method name per line, e.g. Runtime.evaluate.",
+    "blockTabUrlPrefixes": "Blocked tab URL prefixes",
+    "blockTabUrlPrefixesDescription": "One prefix per line. Tabs with matching URLs cannot be automated.",
+    "allowedNavigateProtocols": "Allowed protocols for Page.navigate",
+    "allowedNavigateProtocolsDescription": "One protocol per line, e.g. http: or https:."
   }
 }

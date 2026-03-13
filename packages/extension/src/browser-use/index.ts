@@ -49,6 +49,8 @@ import { getSnapshot } from './snapshot'
 import { ensureTabState, updateTabState } from './state'
 import { clearStorage, getStorage, setStorage } from './storage'
 
+export * from './types'
+
 function getRecordingState(tabId: number) {
   const tabState = ensureTabState(tabId)
 
@@ -56,6 +58,10 @@ function getRecordingState(tabId: number) {
 }
 
 export async function dispatchAction(command: Command) {
+  if (command.action !== 'ATTACH_DEBUGGER') {
+    await attachDebugger(command.typeId)
+  }
+
   switch (command.action) {
     case 'GET_COOKIES':
       return getCookies(command.typeId, command.urls)

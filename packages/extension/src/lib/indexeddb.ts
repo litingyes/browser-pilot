@@ -18,13 +18,24 @@ export interface IFsJSON {
   }
 }
 
+export interface AppSetting<T = unknown> {
+  key: string
+  value: T
+  updatedAt: number
+}
+
 class SkillsDatabase extends Dexie {
   skills!: Table<Skill>
+  settings!: Table<AppSetting>
 
   constructor() {
     super('browser-pilot')
     this.version(1).stores({
       skills: 'name, createdAt, updatedAt',
+    })
+    this.version(2).stores({
+      skills: 'name, createdAt, updatedAt',
+      settings: 'key, updatedAt',
     })
   }
 }

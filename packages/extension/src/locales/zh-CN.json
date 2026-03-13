@@ -49,6 +49,7 @@
     "replaceSkillConfirm": "名为 \"{name}\" 的技能已存在。是否替换？",
     "replace": "替换",
     "skillNotFoundError": "未找到 SKILL.md 文件，请确保 skill 包中包含 SKILL.md",
+    "reservedSkillNameError": "技能名 \"{name}\" 为内置保留名，无法安装。",
     "parsingSkill": "正在解析技能..."
   },
   "skillViewer": {
@@ -114,6 +115,21 @@
     "language": "语言",
     "languageDescription": "手动选择扩展语言。",
     "languageOptionEnglish": "English",
-    "languageOptionChinese": "简体中文"
+    "languageOptionChinese": "简体中文",
+    "browserUsePolicyTitle": "Browser-use 策略",
+    "browserUsePolicyDescription": "配置 browser-use 工具调用的安全策略。修改将存储到 IndexedDB。",
+    "browserUsePolicySaved": "Browser-use 策略已保存",
+    "requireConfirmationForSendCdp": "执行 SEND_CDP 前要求确认",
+    "requireConfirmationForSendCdpDescription": "启用后，聊天流程会先中断并询问确认，再执行 SEND_CDP。",
+    "allowAgentTabIdOverride": "允许 agent 指定 tabId 覆盖",
+    "allowAgentTabIdOverrideDescription": "关闭后，browser-use 仅可作用于当前激活 tab。",
+    "blockMethodPrefixes": "阻止的 CDP 方法前缀",
+    "blockMethodPrefixesDescription": "每行一个前缀。匹配前缀的方法将被阻止。",
+    "blockMethods": "阻止的 CDP 方法",
+    "blockMethodsDescription": "每行一个完整方法名，例如 Runtime.evaluate。",
+    "blockTabUrlPrefixes": "阻止的 tab URL 前缀",
+    "blockTabUrlPrefixesDescription": "每行一个前缀。匹配 URL 的 tab 禁止自动化。",
+    "allowedNavigateProtocols": "Page.navigate 允许协议",
+    "allowedNavigateProtocolsDescription": "每行一个协议，例如 http: 或 https:。"
   }
 }
