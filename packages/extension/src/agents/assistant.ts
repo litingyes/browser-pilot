@@ -1,11 +1,10 @@
-import type { Command, SendCdpCommand } from '@/browser-use/types'
+import type { Command } from '@/browser-use/types'
 import type { AiModelId } from '@/lib/ai-provider'
 import type { Skill } from '@/lib/indexeddb'
 import { tool, ToolLoopAgent } from 'ai'
 import { z } from 'zod'
 import { dispatchAction } from '@/browser-use'
 import { createAiProvider } from '@/lib/ai-provider'
-import { getBrowserUsePolicy } from '@/lib/browser-use-policy'
 import { buildSkillsPrompt, getSkillContent } from '@/lib/skills'
 
 const browserUseActionSchema = z.enum([
@@ -63,56 +62,11 @@ const browserUseActionSchema = z.enum([
 const browserUseDispatchInputSchema = z.object({
   action: browserUseActionSchema.describe('Browser-use action to dispatch'),
   tabId: z.number().int().nonnegative().optional().describe('Optional target tab id, defaults to active tab'),
-  confirmSensitiveAction: z.boolean().optional().describe('Required for sensitive actions when policy requests confirmation'),
 })
 
 interface AssistantContext {
   skills: Skill[]
   getActiveTabId: () => Promise<number>
-}
-
-const ALWAYS_BLOCKED_TAB_URL_PREFIXES = [
-  'chrome://',
-  'edge://',
-  'about:',
-  'devtools://',
-  'chrome-extension://',
-  'moz-extension://',
-]
-
-function isBlockedCdpMethod(method: string, blockedMethods: string[], blockedPrefixes: string[]) {
-  if (blockedMethods.includes(method)) {
-    return true
-  }
-
-  return blockedPrefixes.some(prefix => method.startsWith(prefix))
-}
-
-function isSafeNavigateUrl(url: string, allowedProtocols: string[]) {
-  try {
-    const parsed = new URL(url)
-    return allowedProtocols.includes(parsed.protocol)
-  }
-  catch {
-    return false
-  }
-}
-
-async function assertTabIsSafeTarget(tabId: number, blockedPrefixes: string[]) {
-  const tab = await browser.tabs.get(tabId)
-  if (!tab) {
-    throw new Error(`Target tab ${tabId} not found`)
-  }
-
-  if (!tab.url) {
-    return
-  }
-
-  const lowerUrl = tab.url.toLowerCase()
-  const effectiveBlockedPrefixes = [...new Set([...ALWAYS_BLOCKED_TAB_URL_PREFIXES, ...blockedPrefixes])]
-  if (effectiveBlockedPrefixes.some(prefix => lowerUrl.startsWith(prefix))) {
-    throw new Error(`Target tab ${tabId} is not allowed for automation`)
-  }
 }
 
 const loadSkillTool = tool({
@@ -146,65 +100,11 @@ const browserUseDispatchTool = tool({
       return { ok: false, error: 'No active-tab resolver available in context' }
     }
 
-    const policy = await getBrowserUsePolicy()
-
-    if (typeof input.tabId === 'number' && !policy.allowAgentTabIdOverride) {
-      return {
-        ok: false,
-        error: 'Policy denied tabId override. Use active tab or update preferences.',
-      }
-    }
-
     const tabId = input.tabId ?? await getActiveTabId()
     if (!Number.isInteger(tabId) || tabId < 0) {
       return { ok: false, error: `Invalid tab id: ${tabId}` }
     }
-    try {
-      await assertTabIsSafeTarget(tabId, policy.blockTabUrlPrefixes)
-    }
-    catch (error) {
-      return {
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      }
-    }
-
-    if (input.action === 'SEND_CDP') {
-      const command = input as SendCdpCommand
-
-      const method = typeof command.method === 'string' ? command.method.trim() : ''
-      if (!method) {
-        return { ok: false, error: 'SEND_CDP requires a non-empty method' }
-      }
-
-      if (isBlockedCdpMethod(method, policy.blockMethods, policy.blockMethodPrefixes)) {
-        return { ok: false, error: `CDP method is blocked by policy: ${method}` }
-      }
-
-      if (policy.requireConfirmationForSendCdp && input.confirmSensitiveAction !== true) {
-        const { confirmSensitiveAction: _confirmSensitiveAction, ...restInput } = input
-        return {
-          ok: false,
-          interrupted: true,
-          error: `Sensitive action "${method}" requires confirmation`,
-          nextStep: 'Ask user for confirmation, then retry with confirmSensitiveAction=true or update preferences policy.',
-          retryInput: {
-            ...restInput,
-            confirmSensitiveAction: true,
-          },
-        }
-      }
-
-      if (method === 'Page.navigate') {
-        const params = (command.params ?? {}) as Record<string, unknown>
-        const url = typeof params.url === 'string' ? params.url : ''
-        if (!isSafeNavigateUrl(url, policy.allowedNavigateProtocols)) {
-          return { ok: false, error: `Blocked navigation URL: ${url || 'empty'}` }
-        }
-      }
-    }
-
-    const { tabId: _tabId, confirmSensitiveAction: _confirmSensitiveAction, ...commandInput } = input
+    const { tabId: _tabId, ...commandInput } = input
     const command = {
       id: crypto.randomUUID(),
       typeId: tabId,
@@ -226,10 +126,7 @@ const browserUseDispatchTool = tool({
 
 export const assistant = new ToolLoopAgent({
   id: 'Assistant',
-  instructions: `You are a helpful assistant.
-
-When browserUseDispatch returns { interrupted: true, retryInput }, ask the user for confirmation in natural language.
-If the user confirms, retry browserUseDispatch immediately using retryInput without asking the user to provide technical flags.`,
+  instructions: 'You are a helpful assistant.',
   model: 'default',
   tools: {
     loadSkill: loadSkillTool,

@@ -20,6 +20,7 @@
   },
   "registries": {
     "@svgl": "https://svgl.app/r/{name}.json",
-    "@ai-elements": "https://ai-sdk.dev/elements/api/registry/{name}.json"
+    "@ai-elements": "https://ai-sdk.dev/elements/api/registry/{name}.json",
+    "@tool-ui": "https://www.tool-ui.com/r/{name}.json"
   }
 }

@@ -24,8 +24,10 @@ export default antfu(
     ignores: [
       '.agents/skills',
       '.claude/skills',
+      'skills',
       'packages/extension/src/components/ui',
       'packages/extension/src/components/ai-elements',
+      'packages/extension/src/components/tool-ui',
       'packages/extension/src/hooks/use-mobile.ts',
       'packages/extension/src/lib/utils.ts',
     ],

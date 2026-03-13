@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { i18n } from '@/i18n'
-import { isReservedBuiltinSkillName } from '@/lib/builtin-skills'
 import { readFolder } from '@/lib/folder-reader'
 import { computeHash } from '@/lib/hash'
 import { db } from '@/lib/indexeddb'
@@ -31,15 +30,16 @@ async function processSkillFiles(files: IFsJSON): Promise<Skill | null> {
     return null
 
   const { name, description } = await parseSkillMeta(skillMd.content)
-  const computedHash = await computeHash(files)
+  const id = await computeHash(files)
   const now = Date.now()
 
   const existing = await db.skills.get(name)
   if (existing) {
     return {
+      id,
       name,
       description,
-      computedHash,
+      builtin: false,
       createdAt: existing.createdAt,
       updatedAt: now,
       files,
@@ -47,9 +47,10 @@ async function processSkillFiles(files: IFsJSON): Promise<Skill | null> {
   }
 
   return {
+    id,
     name,
     description,
-    computedHash,
+    builtin: false,
     createdAt: now,
     updatedAt: now,
     files,
@@ -93,13 +94,14 @@ export default function SkillsRoute() {
         toast.error(i18n.t('skills.skillNotFoundError'))
         return
       }
-      if (isReservedBuiltinSkillName(skill.name)) {
-        toast.error(i18n.t('skills.reservedSkillNameError', { name: skill.name }))
-        return
-      }
 
       const existing = await db.skills.get(skill.name)
       if (existing) {
+        if (existing.builtin) {
+          toast.error(i18n.t('skills.reservedSkillNameError', { name: skill.name }))
+          return
+        }
+
         setReplaceTarget(skill)
       }
       else {
@@ -131,13 +133,14 @@ export default function SkillsRoute() {
         toast.error(i18n.t('skills.skillNotFoundError'))
         return
       }
-      if (isReservedBuiltinSkillName(skill.name)) {
-        toast.error(i18n.t('skills.reservedSkillNameError', { name: skill.name }))
-        return
-      }
 
       const existing = await db.skills.get(skill.name)
       if (existing) {
+        if (existing.builtin) {
+          toast.error(i18n.t('skills.reservedSkillNameError', { name: skill.name }))
+          return
+        }
+
         setReplaceTarget(skill)
       }
       else {

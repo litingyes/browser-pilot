@@ -12,6 +12,7 @@ import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, Pro
 import { Reasoning, ReasoningContent, ReasoningTrigger } from '@/components/ai-elements/reasoning'
 import { Shimmer } from '@/components/ai-elements/shimmer'
 import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool'
+import { ApprovalCard } from '@/components/tool-ui/approval-card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
@@ -99,7 +100,7 @@ export default function Chat() {
     })
   }, [])
 
-  const { messages, sendMessage, status, stop, regenerate, error } = useChat({
+  const { messages, sendMessage, status, stop, regenerate, addToolApprovalResponse, error } = useChat({
     transport,
   })
   const isLoading = useMemo(() => status === 'submitted' || status === 'streaming', [status])
@@ -174,6 +175,26 @@ export default function Chat() {
                     }
                     else if (isToolPart(part)) {
                       const isCompleted = part.state === 'output-available' || part.state === 'output-denied' || part.state === 'output-error'
+
+                      if (part.state === 'approval-requested') {
+                        console.warn(part)
+
+                        return (
+                          <ApprovalCard
+                            key={`${message.id}-${part.type}-${partIndex}`}
+                            approval={part.approval}
+                            state={part.state}
+                            onAccept={() => addToolApprovalResponse({
+                              id: part.approval.id,
+                              approved: true,
+                            })}
+                            onReject={() => addToolApprovalResponse({
+                              id: part.approval.id,
+                              approved: false,
+                            })}
+                          />
+                        )
+                      }
 
                       return (
                         // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id

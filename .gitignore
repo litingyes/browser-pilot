@@ -18,6 +18,7 @@ node_modules
 # extension
 packages/extension/.wxt
 packages/extension/.output
+packages/extension/public/skills/built-in.zip
 
 # docs
 packages/docs/doc_build
