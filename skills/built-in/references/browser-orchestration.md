@@ -46,17 +46,6 @@ const title = await dispatchAction('GET_TITLE', {}, tabId)
 
 ---
 
-## GET_CONTENT
-Get current page HTML (`document.documentElement.outerHTML`).
-
-**Returns:** `string`
-
-```typescript
-const html = await dispatchAction('GET_CONTENT', {}, tabId)
-```
-
----
-
 ## TAB_LIST
 List tabs in the current window context, with active state.
 

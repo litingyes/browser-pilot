@@ -245,12 +245,6 @@ export async function getTitle(tabId: number) {
   return evaluateString(tabId, 'document.title')
 }
 
-export async function getContent(tabId: number) {
-  await attachDebugger(tabId)
-  await sendCdp(tabId, 'Runtime.enable')
-  return evaluateString(tabId, 'document.documentElement.outerHTML')
-}
-
 export async function tabList(tabId: number) {
   const tabs = await getWindowTabsFor(tabId)
   const mapped = tabs.map((tab): BrowserTabView => ({

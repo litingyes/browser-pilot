@@ -8,7 +8,6 @@ const browserUseActionSchema = z.enum([
   'NAVIGATE',
   'GET_URL',
   'GET_TITLE',
-  'GET_CONTENT',
   'TAB_LIST',
   'TAB_NEW',
   'TAB_SWITCH',

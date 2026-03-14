@@ -1,6 +1,5 @@
 import type { Command } from './types'
 import {
-  getContent,
   getTitle,
   getUrl,
   isConnectionAlive,
@@ -86,8 +85,6 @@ export async function dispatchAction(command: Command) {
       return getUrl(command.typeId)
     case 'GET_TITLE':
       return getTitle(command.typeId)
-    case 'GET_CONTENT':
-      return getContent(command.typeId)
     case 'TAB_LIST':
       return tabList(command.typeId)
     case 'TAB_NEW':

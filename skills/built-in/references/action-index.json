@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-03-13T17:19:19.681Z",
+  "generatedAt": "2026-03-14T06:00:09.054Z",
   "source": "packages/extension/src/browser-use/types.ts",
-  "totalActions": 58,
+  "totalActions": 57,
   "undocumented": [],
   "extraMappings": [],
   "actions": [
@@ -48,10 +48,6 @@
     {
       "action": "FOCUS",
       "reference": "references/element-interactions.md"
-    },
-    {
-      "action": "GET_CONTENT",
-      "reference": "references/browser-orchestration.md"
     },
     {
       "action": "GET_COOKIES",

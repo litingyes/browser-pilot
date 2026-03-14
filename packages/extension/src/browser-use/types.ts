@@ -46,10 +46,6 @@ export type GetTitleCommand = BaseCommand & {
   action: 'GET_TITLE'
 }
 
-export type GetContentCommand = BaseCommand & {
-  action: 'GET_CONTENT'
-}
-
 export type TabListCommand = BaseCommand & {
   action: 'TAB_LIST'
 }
@@ -308,4 +304,4 @@ export type ClearStorageCommand = BaseCommand & {
   storageType?: StorageType
 }
 
-export type Command = GetCookiesCommand | SetCookiesCommand | ClearCookiesCommand | AttachDebuggerCommand | SendCdpCommand | NavigateCommand | GetUrlCommand | GetTitleCommand | GetContentCommand | TabListCommand | TabNewCommand | TabSwitchCommand | TabCloseCommand | IsConnectionAliveCommand | ParseRefCommand | ResolveElementCenterCommand | ResolveElementObjectIdCommand | GetElementTextCommand | GetElementAttributeCommand | IsElementVisibleCommand | IsElementEnabledCommand | IsElementCheckedCommand | GetElementInnerTextCommand | GetElementInnerHtmlCommand | GetElementInputValueCommand | SetElementValueCommand | GetElementBoundingBoxCommand | GetElementCountCommand | GetElementStylesCommand | ClickCommand | DblclickCommand | HoverCommand | FillCommand | TypeTextCommand | PressKeyCommand | ScrollCommand | SelectOptionCommand | CheckCommand | UncheckCommand | FocusCommand | ClearCommand | SelectAllCommand | ScrollIntoViewCommand | DispatchEventCommand | HighlightCommand | TapTouchCommand | RecordingStartCommand | RecordingAddFrameCommand | RecordingStopCommand | RecordingRestartCommand | GetLastRecordingFramesCommand | TakeScreenshotCommand | GetSnapshotCommand | EnsureTabStateCommand | UpdateTabStateCommand | GetStorageCommand | SetStorageCommand | ClearStorageCommand
+export type Command = GetCookiesCommand | SetCookiesCommand | ClearCookiesCommand | AttachDebuggerCommand | SendCdpCommand | NavigateCommand | GetUrlCommand | GetTitleCommand | TabListCommand | TabNewCommand | TabSwitchCommand | TabCloseCommand | IsConnectionAliveCommand | ParseRefCommand | ResolveElementCenterCommand | ResolveElementObjectIdCommand | GetElementTextCommand | GetElementAttributeCommand | IsElementVisibleCommand | IsElementEnabledCommand | IsElementCheckedCommand | GetElementInnerTextCommand | GetElementInnerHtmlCommand | GetElementInputValueCommand | SetElementValueCommand | GetElementBoundingBoxCommand | GetElementCountCommand | GetElementStylesCommand | ClickCommand | DblclickCommand | HoverCommand | FillCommand | TypeTextCommand | PressKeyCommand | ScrollCommand | SelectOptionCommand | CheckCommand | UncheckCommand | FocusCommand | ClearCommand | SelectAllCommand | ScrollIntoViewCommand | DispatchEventCommand | HighlightCommand | TapTouchCommand | RecordingStartCommand | RecordingAddFrameCommand | RecordingStopCommand | RecordingRestartCommand | GetLastRecordingFramesCommand | TakeScreenshotCommand | GetSnapshotCommand | EnsureTabStateCommand | UpdateTabStateCommand | GetStorageCommand | SetStorageCommand | ClearStorageCommand

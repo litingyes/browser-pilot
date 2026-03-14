@@ -9,7 +9,6 @@ const ACTION_TO_REFERENCE: Record<string, string> = {
   NAVIGATE: 'references/browser-orchestration.md',
   GET_URL: 'references/browser-orchestration.md',
   GET_TITLE: 'references/browser-orchestration.md',
-  GET_CONTENT: 'references/browser-orchestration.md',
   TAB_LIST: 'references/browser-orchestration.md',
   TAB_NEW: 'references/browser-orchestration.md',
   TAB_SWITCH: 'references/browser-orchestration.md',
