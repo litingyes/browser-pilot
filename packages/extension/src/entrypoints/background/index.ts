@@ -4,6 +4,7 @@ import { detachDebugger } from '@/browser-use/debugger'
 import { removeTabState } from '@/browser-use/state'
 import { computeHash } from '@/lib/hash'
 import { db } from '@/lib/indexeddb'
+import { cleanupStoredScreenshots } from '@/lib/screenshot-storage'
 import { unzip } from '@/lib/zip'
 import { AI_GATEWAY_STORAGE_KEY } from '@/stores/ai-gateways'
 import { AI_MODELS_STORAGE_KEY } from '@/stores/ai-models'
@@ -99,6 +100,7 @@ export default defineBackground({
   type: 'module',
   main() {
     initBuiltinSkills()
+    cleanupStoredScreenshots()
 
     browser.sidePanel.onClosed.addListener(async (info) => {
       if (info.tabId !== undefined) {

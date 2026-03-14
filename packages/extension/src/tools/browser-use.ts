@@ -4,6 +4,30 @@ import { tool } from 'ai'
 import { z } from 'zod'
 import { dispatchAction } from '@/browser-use'
 
+const MAX_OUTPUT_STRING_LENGTH = 8192
+
+function truncateLargeStrings(value: unknown): unknown {
+  if (typeof value === 'string') {
+    if (value.length <= MAX_OUTPUT_STRING_LENGTH) {
+      return value
+    }
+    const hiddenLength = value.length - MAX_OUTPUT_STRING_LENGTH
+    return `${value.slice(0, MAX_OUTPUT_STRING_LENGTH)}...[truncated ${hiddenLength} chars; fetch via screenshotId or a follow-up action]`
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(item => truncateLargeStrings(item))
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nestedValue]) => [key, truncateLargeStrings(nestedValue)]),
+    )
+  }
+
+  return value
+}
+
 const browserUseActionSchema = z.enum([
   'NAVIGATE',
   'GET_URL',
@@ -92,7 +116,7 @@ export const browserUseTool = tool({
 
     try {
       const data = await dispatchAction(command)
-      return { ok: true, data }
+      return { ok: true, data: truncateLargeStrings(data) }
     }
     catch (error) {
       return {

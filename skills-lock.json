@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "84f3a2a57fa71ae5061786280987575d673792d6dda9a63941efb2795b83543a"
     },
+    "development-frontend": {
+      "source": "litingyes/skills",
+      "sourceType": "github",
+      "computedHash": "640b6bfc7e382832c9a674918f611dfffb250fc3d59de74622e99d2a85544a5a"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",

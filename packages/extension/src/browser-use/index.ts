@@ -55,7 +55,9 @@ import {
   recordingStart,
   recordingStop,
 } from './recording'
-import { takeScreenshot } from './screenshot'
+import {
+  takeScreenshot,
+} from './screenshot'
 import { getSnapshot } from './snapshot'
 import { ensureTabState, updateTabState } from './state'
 import { clearStorage, getStorage, setStorage } from './storage'
@@ -69,7 +71,11 @@ function getRecordingState(tabId: number) {
 }
 
 export async function dispatchAction(command: Command) {
-  if (command.action !== 'ATTACH_DEBUGGER') {
+  const skipAttachDebuggerActions = new Set([
+    'ATTACH_DEBUGGER',
+  ])
+
+  if (!skipAttachDebuggerActions.has(command.action)) {
     await attachDebugger(command.typeId)
   }
 

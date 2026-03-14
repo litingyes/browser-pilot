@@ -1,3 +1,7 @@
+import {
+  getScreenshotBlobUrlById,
+  saveScreenshotToStore,
+} from '../lib/screenshot-storage'
 import { attachDebugger, sendCdp } from './debugger'
 import { resolveElementObjectId } from './element'
 
@@ -56,9 +60,16 @@ interface ElementRect {
 }
 
 export interface ScreenshotResult {
+  screenshotId: string
+  virtualPath: string
+  createdAt: number
+  mimeType: string
+  bytes: number
+  width?: number
+  height?: number
   path: string
-  data: string
-  dataUrl: string
+  data?: string
+  url: string
 }
 
 function isElementRect(value: unknown): value is ElementRect {
@@ -165,10 +176,19 @@ export async function takeScreenshot(
   const extension = toFileExtension(format)
   const path = options.path || `screenshot-${Date.now()}.${extension}`
   const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png'
+  const width = params.clip?.width
+  const height = params.clip?.height
+  const stored = await saveScreenshotToStore({
+    base64Data: data,
+    height,
+    mimeType,
+    path,
+    tabId,
+    width,
+  })
 
   return {
-    data,
-    dataUrl: `data:${mimeType};base64,${data}`,
-    path,
+    ...stored,
+    url: await getScreenshotBlobUrlById(stored.screenshotId),
   }
 }
