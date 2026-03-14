@@ -1,22 +1,15 @@
-import type { ReactNode } from 'react'
-import type { ScreenshotResult } from '@/browser-use/screenshot'
-import type { ToolPart } from '@/components/ai-elements/tool'
 import type { AiGateway } from '@/stores/ai-gateways'
 import { useChat } from '@ai-sdk/react'
 import { DirectChatTransport } from 'ai'
-import { isObject, isString } from 'es-toolkit/compat'
-import { CopyIcon, InfoIcon, RefreshCcwIcon } from 'lucide-react'
-import { isValidElement, useMemo, useRef } from 'react'
+import { InfoIcon } from 'lucide-react'
+import { useMemo, useRef } from 'react'
 import { assistant } from '@/agents/assistant'
-import { CodeBlock } from '@/components/ai-elements/code-block'
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from '@/components/ai-elements/conversation'
-import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from '@/components/ai-elements/message'
+import { Message, MessageContent } from '@/components/ai-elements/message'
 import { ModelSelector, ModelSelectorContent, ModelSelectorEmpty, ModelSelectorGroup, ModelSelectorInput, ModelSelectorItem, ModelSelectorList, ModelSelectorLogo, ModelSelectorName, ModelSelectorTrigger } from '@/components/ai-elements/model-selector'
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, PromptInputTools } from '@/components/ai-elements/prompt-input'
-import { Reasoning, ReasoningContent, ReasoningTrigger } from '@/components/ai-elements/reasoning'
 import { Shimmer } from '@/components/ai-elements/shimmer'
-import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool'
-import { Image } from '@/components/tool-ui/image'
+import AiMessage from '@/components/ai-message'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
@@ -68,10 +61,6 @@ async function resolveActiveDebuggableTabId() {
   }
 
   throw new Error('当前浏览器调试器附加失败：未找到可操作的活动标签页。请先打开目标网页并保持其为激活状态后重试，或直接提供 tabId。')
-}
-
-function isToolPart(part: { type: string }): part is ToolPart {
-  return part.type === 'dynamic-tool' || part.type.startsWith('tool-')
 }
 
 export default function Chat() {
@@ -153,68 +142,7 @@ export default function Chat() {
             const isLastMessage = messageIndex === messages.length - 1
 
             return (
-              <Message key={message.id} from={message.role}>
-                <MessageContent>
-                  {message.parts.map((part, partIndex) => {
-                    const isLastPart = partIndex === message.parts.length - 1
-
-                    if (part.type === 'text') {
-                      return (
-                        // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
-                        <MessageResponse key={`${message.id}-${part.type}-${partIndex}`}>
-                          {part.text}
-                        </MessageResponse>
-                      )
-                    }
-                    else if (part.type === 'reasoning') {
-                      return (
-                        // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
-                        <Reasoning key={`${message.id}-${part.type}-${partIndex}`} isStreaming={status === 'streaming' && isLastMessage && isLastPart}>
-                          <ReasoningTrigger />
-                          <ReasoningContent>
-                            {part.text}
-                          </ReasoningContent>
-                        </Reasoning>
-                      )
-                    }
-                    else if (isToolPart(part)) {
-                      const isCompleted = part.state === 'output-available' || part.state === 'output-denied' || part.state === 'output-error'
-
-                      return (
-                        // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
-                        <Tool key={`${message.id}-${part.type}-${partIndex}`} defaultOpen={!isCompleted}>
-                          {part.type === 'dynamic-tool'
-                            ? (
-                                <ToolHeader state={part.state} toolName={part.toolName} type={part.type} />
-                              )
-                            : (
-                                <ToolHeader state={part.state} type={part.type} />
-                              )}
-                          <ToolContent>
-                            <ToolInput input={part.input ?? {}} />
-                            <ToolOutput
-                              errorText={part.errorText}
-                              output={<ToolOutputContent part={part} />}
-                            />
-                          </ToolContent>
-                        </Tool>
-                      )
-                    }
-
-                    return null
-                  })}
-                </MessageContent>
-                {message.role === 'assistant' && (!isLastMessage || !isLoading) && (
-                  <MessageActions>
-                    <MessageAction tooltip={i18n.t('chat.regenerate')} onClick={() => regenerate()}>
-                      <RefreshCcwIcon />
-                    </MessageAction>
-                    <MessageAction tooltip={i18n.t('chat.copy')} onClick={() => navigator.clipboard.writeText(message.parts.find(part => part.type === 'text')?.text ?? '')}>
-                      <CopyIcon />
-                    </MessageAction>
-                  </MessageActions>
-                )}
-              </Message>
+              <AiMessage key={message.id} message={message} isLastMessage={isLastMessage} isLoading={isLoading} regenerate={regenerate} />
             )
           })}
           {isLoadingAndNotResponse && (
@@ -299,31 +227,4 @@ export default function Chat() {
       </PromptInput>
     </div>
   )
-}
-
-function ToolOutputContent({ part }: { part: ToolPart }) {
-  if (part.type === 'tool-browserUseDispatch' && part.state === 'output-available' && (part.input as { action?: string })?.action === 'TAKE_SCREENSHOT') {
-    const output = (part.output as { data: ScreenshotResult }).data
-    return (
-      <Image
-        className="max-w-none"
-        id={part.toolCallId}
-        assetId={output.screenshotId}
-        src={output.url}
-        fit="contain"
-        fileSizeBytes={output.bytes}
-        alt="Screenshot"
-      />
-    )
-  }
-
-  if (isObject(part.output) && !isValidElement(part.output)) {
-    return <CodeBlock code={JSON.stringify(part.output, null, 2)} language="json" />
-  }
-
-  if (isString(part.output)) {
-    return <CodeBlock code={part.output} language="json" />
-  }
-
-  return part.output as ReactNode
 }
