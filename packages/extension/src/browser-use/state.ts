@@ -3,7 +3,7 @@ import type { SnapshotRef } from './snapshot'
 import { newRecordingState } from './recording'
 
 // attach manager
-interface TabState {
+export interface TabState {
   attached: boolean
   refs: Record<string, SnapshotRef>
   recordingState: RecordingState
@@ -22,7 +22,24 @@ export function ensureTabState(tabId: number) {
   return tabStates.get(tabId)!
 }
 
+export function getTabState(tabId: number) {
+  return tabStates.get(tabId)
+}
+
+export function removeTabState(tabId: number) {
+  return tabStates.delete(tabId)
+}
+
 export function updateTabState(tabId: number, state: Partial<TabState>) {
   const tabState = ensureTabState(tabId)
-  tabState.refs = { ...tabState.refs, ...state.refs }
+
+  if (typeof state.attached === 'boolean') {
+    tabState.attached = state.attached
+  }
+  if (state.refs) {
+    tabState.refs = { ...tabState.refs, ...state.refs }
+  }
+  if (state.recordingState) {
+    tabState.recordingState = state.recordingState
+  }
 }

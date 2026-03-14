@@ -1,5 +1,7 @@
 import type { AI_MODELS } from '@/stores/ai-models'
 import { storage } from '#imports'
+import { detachDebugger } from '@/browser-use/debugger'
+import { removeTabState } from '@/browser-use/state'
 import { computeHash } from '@/lib/hash'
 import { db } from '@/lib/indexeddb'
 import { unzip } from '@/lib/zip'
@@ -95,8 +97,26 @@ async function initBuiltinSkills() {
 
 export default defineBackground({
   type: 'module',
-  async main() {
-    await initBuiltinSkills()
+  main() {
+    initBuiltinSkills()
+
+    browser.sidePanel.onClosed.addListener(async (info) => {
+      if (info.tabId !== undefined) {
+        await detachDebugger(info.tabId)
+        return
+      }
+
+      const tabs = await browser.tabs.query({ windowId: info.windowId })
+      await Promise.all(
+        tabs
+          .filter(tab => Number.isInteger(tab.id))
+          .map(tab => detachDebugger(tab.id!)),
+      )
+    })
+
+    browser.tabs.onRemoved.addListener((tabId) => {
+      removeTabState(tabId)
+    })
 
     if (import.meta.env.DEV) {
       initStoragesForDevelopment()
