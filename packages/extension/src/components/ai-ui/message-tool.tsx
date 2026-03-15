@@ -5,7 +5,11 @@ import { isObject, isString } from 'es-toolkit/compat'
 import { isValidElement } from 'react'
 import { CodeBlock } from '@/components/ai-elements/code-block'
 import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool'
-import { Image } from '@/components/tool-ui/image'
+import {
+  ImagePreview,
+  ImageRoot,
+  ImageZoom,
+} from '@/components/assistant-ui/image'
 
 interface AiToolProps {
   part: ToolPart
@@ -39,15 +43,14 @@ function ToolOutputContent({ part }: { part: ToolPart }) {
   if (part.type === 'tool-browserUseDispatch' && part.state === 'output-available' && (part.input as { action?: string })?.action === 'TAKE_SCREENSHOT') {
     const output = (part.output as { data: Partial<ScreenshotResult> }).data
     return (
-      <Image
-        className="max-w-none"
-        id={part.toolCallId}
-        assetId={output?.screenshotId ?? ''}
-        src={output?.url ?? ''}
-        fit="contain"
-        fileSizeBytes={output?.bytes ?? 0}
-        alt="Screenshot"
-      />
+      <ImageRoot
+        variant="muted"
+        size="lg"
+      >
+        <ImageZoom src={output?.url ?? ''} alt="Screenshot">
+          <ImagePreview src={output?.url ?? ''} alt="Screenshot" />
+        </ImageZoom>
+      </ImageRoot>
     )
   }
 
