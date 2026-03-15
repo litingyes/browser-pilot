@@ -1,0 +1,24 @@
+<svg viewBox="0 0 64 64" role="img" aria-labelledby="title desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="title">Pilo logo</title>
+  <desc id="desc">A minimal monochrome P mark in a rounded square, inspired by shadcn/ui aesthetics.</desc>
+
+  <rect
+    x="8"
+    y="8"
+    width="48"
+    height="48"
+    rx="12"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+  />
+
+  <path
+    d="M24 46V18H34C39.5228 18 44 22.4772 44 28C44 33.5228 39.5228 38 34 38H24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

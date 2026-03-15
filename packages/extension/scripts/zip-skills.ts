@@ -4,7 +4,7 @@ import { join, relative } from 'node:path'
 import process from 'node:process'
 import { BlobWriter, TextReader, ZipWriter } from '@zip.js/zip.js'
 
-// Path to skills source: extension/scripts -> extension -> packages -> browser-pilot -> skills
+// Path to skills source: extension/scripts -> extension -> packages -> pilo -> skills
 const SKILLS_DIR = join(import.meta.dirname, '../../../skills/built-in')
 const OUTPUT_DIR = join(import.meta.dirname, '../public/skills')
 const OUTPUT_PATH = join(OUTPUT_DIR, 'built-in.zip')

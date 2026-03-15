@@ -16,6 +16,11 @@
       "sourceType": "github",
       "computedHash": "91c02eb706f046fb9d6a061efbb96496e4be751b5b14c283cf82baaa50f3a985"
     },
+    "svg": {
+      "source": "litingyes/skills",
+      "sourceType": "github",
+      "computedHash": "a58632d6fe8b0189bcd8024709f3dce82bb17b9041a772c26e4a7937368d575e"
+    },
     "tool-ui": {
       "source": "assistant-ui/tool-ui",
       "sourceType": "github",

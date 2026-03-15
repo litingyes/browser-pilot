@@ -36,7 +36,7 @@ class SkillsDatabase extends Dexie {
   screenshots!: Table<ScreenshotRecord>
 
   constructor() {
-    super('browser-pilot')
+    super('pilo')
     this.version(1).stores({
       skills: 'id, name',
     })

@@ -3,13 +3,13 @@ import { defineConfig } from '@rspress/core'
 
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
-  title: 'Browser Pilot',
+  title: 'Pilo',
   themeConfig: {
     socialLinks: [
       {
         icon: 'github',
         mode: 'link',
-        content: 'https://github.com/litingyes/browser-pilot',
+        content: 'https://github.com/litingyes/pilo',
       },
     ],
   },
