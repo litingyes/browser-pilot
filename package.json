@@ -2,7 +2,7 @@
   "name": "pilo-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "A AI-based browser extension.",
+  "description": "Your browser, on autopilot.",
   "scripts": {
     "dev": "pnpm --filter extension dev",
     "zip": "pnpm --filter extension zip",
