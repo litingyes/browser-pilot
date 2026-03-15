@@ -18,9 +18,11 @@ export default function App() {
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link to="/preferences" />} isActive={location.pathname === '/preferences'}>
-                  <FolderCodeIcon />
-                  {i18n.t('sidebar.preferences')}
+                <SidebarMenuButton isActive={location.pathname === '/preferences'} asChild>
+                  <Link to="/preferences">
+                    <FolderCodeIcon />
+                    {i18n.t('sidebar.preferences')}
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarGroup>
@@ -31,16 +33,19 @@ export default function App() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link to="/ai-gateway" />} isActive={location.pathname === '/ai-gateway'}>
-                      <BrainCircuitIcon />
-                      {i18n.t('sidebar.gateway')}
+                    <SidebarMenuButton isActive={location.pathname === '/ai-gateway'} asChild>
+                      <Link to="/ai-gateway">
+                        <BrainCircuitIcon />
+                        {i18n.t('sidebar.gateway')}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-
                   <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link to="/skills" />} isActive={location.pathname === '/skills'}>
-                      <AgentSkills />
-                      {i18n.t('sidebar.skills')}
+                    <SidebarMenuButton isActive={location.pathname === '/skills'} asChild>
+                      <Link to="/skills">
+                        <AgentSkills />
+                        {i18n.t('sidebar.skills')}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>

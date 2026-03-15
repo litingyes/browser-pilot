@@ -58,19 +58,17 @@ function FileTreeItem({
   if ('items' in item) {
     return (
       <Collapsible key={item.name} defaultOpen={depth === 0}>
-        <CollapsibleTrigger
-          render={(
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start transition-none hover:bg-accent hover:text-accent-foreground"
-            >
-              <ChevronRightIcon className="size-4 shrink-0 transition-transform in-data-panel-open:rotate-90" />
-              <FolderIcon className="size-4 shrink-0" />
-              <span className="truncate">{item.name}</span>
-            </Button>
-          )}
-        />
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start transition-none hover:bg-accent hover:text-accent-foreground"
+          >
+            <ChevronRightIcon className="size-4 shrink-0 transition-transform in-data-panel-open:rotate-90" />
+            <FolderIcon className="size-4 shrink-0" />
+            <span className="truncate">{item.name}</span>
+          </Button>
+        </CollapsibleTrigger>
         <CollapsibleContent className="mt-1 ml-5">
           <div className="flex flex-col gap-1">
             {item.items.map(child => (

@@ -1,64 +1,64 @@
-'use client'
+"use client";
 
-import type { VariantProps } from 'class-variance-authority'
-import type { ComponentPropsWithoutRef, ReactNode } from 'react'
-import type { SelectItem } from '@/components/assistant-ui/select'
-import type { selectTriggerVariants } from '@/components/assistant-ui/select-variants'
-import { useAssistantApi } from '@assistant-ui/react'
-import { CheckIcon } from 'lucide-react'
-import { Select as SelectPrimitive } from 'radix-ui'
 import {
-  createContext,
   memo,
-
-  use,
-  useEffect,
   useState,
-} from 'react'
+  useEffect,
+  createContext,
+  useContext,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from "react";
+import { Select as SelectPrimitive } from "radix-ui";
+import { type VariantProps } from "class-variance-authority";
+import { CheckIcon } from "lucide-react";
+import { useAssistantApi } from "@assistant-ui/react";
+import { cn } from "@/lib/utils";
 import {
-  SelectContent,
   SelectRoot,
   SelectTrigger,
-} from '@/components/assistant-ui/select'
-import { cn } from '@/lib/utils'
+  SelectContent,
+  SelectItem,
+  selectTriggerVariants,
+} from "@/components/assistant-ui/select";
 
-export interface ModelOption {
-  id: string
-  name: string
-  description?: string
-  icon?: ReactNode
-  disabled?: boolean
-}
+export type ModelOption = {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: ReactNode;
+  disabled?: boolean;
+};
 
-interface ModelSelectorContextValue {
-  models: ModelOption[]
-  value: string | undefined
-}
+type ModelSelectorContextValue = {
+  models: ModelOption[];
+  value: string | undefined;
+};
 
 const ModelSelectorContext = createContext<ModelSelectorContextValue | null>(
   null,
-)
+);
 
 function useModelSelectorContext() {
-  const ctx = use(ModelSelectorContext)
+  const ctx = useContext(ModelSelectorContext);
   if (!ctx) {
     throw new Error(
-      'ModelSelector sub-components must be used within ModelSelector.Root',
-    )
+      "ModelSelector sub-components must be used within ModelSelector.Root",
+    );
   }
-  return ctx
+  return ctx;
 }
 
-export interface ModelSelectorRootProps {
-  models: ModelOption[]
-  value?: string
-  onValueChange?: (value: string) => void
-  defaultValue?: string
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  defaultOpen?: boolean
-  children: ReactNode
-}
+export type ModelSelectorRootProps = {
+  models: ModelOption[];
+  value?: string;
+  onValueChange?: (value: string) => void;
+  defaultValue?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean;
+  children: ReactNode;
+};
 
 function ModelSelectorRoot({
   models,
@@ -67,9 +67,9 @@ function ModelSelectorRoot({
   value,
   ...selectProps
 }: ModelSelectorRootProps) {
-  const defaultValue = defaultValueProp ?? models[0]?.id
+  const defaultValue = defaultValueProp ?? models[0]?.id;
   return (
-    <ModelSelectorContext value={{ models, value }}>
+    <ModelSelectorContext.Provider value={{ models, value }}>
       <SelectRoot
         {...(defaultValue !== undefined ? { defaultValue } : undefined)}
         {...(value !== undefined ? { value } : undefined)}
@@ -77,13 +77,13 @@ function ModelSelectorRoot({
       >
         {children}
       </SelectRoot>
-    </ModelSelectorContext>
-  )
+    </ModelSelectorContext.Provider>
+  );
 }
 
 export type ModelSelectorTriggerProps = ComponentPropsWithoutRef<
   typeof SelectTrigger
->
+>;
 
 function ModelSelectorTrigger({
   className,
@@ -97,12 +97,12 @@ function ModelSelectorTrigger({
       data-slot="model-selector-trigger"
       variant={variant}
       size={size}
-      className={cn('aui-model-selector-trigger', className)}
+      className={cn("aui-model-selector-trigger", className)}
       {...props}
     >
       {children ?? <ModelSelectorValue />}
     </SelectTrigger>
-  )
+  );
 }
 
 /**
@@ -113,12 +113,12 @@ function ModelSelectorTrigger({
  * Falls back to Select.Value for uncontrolled (defaultValue-only) usage.
  */
 function ModelSelectorValue() {
-  const { models, value } = useModelSelectorContext()
-  const selectedModel
-    = value != null ? models.find(m => m.id === value) : undefined
+  const { models, value } = useModelSelectorContext();
+  const selectedModel =
+    value != null ? models.find((m) => m.id === value) : undefined;
 
   if (!selectedModel) {
-    return <SelectPrimitive.Value />
+    return <SelectPrimitive.Value />;
   }
 
   return (
@@ -132,28 +132,28 @@ function ModelSelectorValue() {
         <span className="truncate font-medium">{selectedModel.name}</span>
       </span>
     </span>
-  )
+  );
 }
 
 export type ModelSelectorContentProps = ComponentPropsWithoutRef<
   typeof SelectContent
->
+>;
 
 function ModelSelectorContent({
   className,
   children,
   ...props
 }: ModelSelectorContentProps) {
-  const { models } = useModelSelectorContext()
+  const { models } = useModelSelectorContext();
 
   return (
     <SelectContent
       data-slot="model-selector-content"
-      className={cn('min-w-[180px]', className)}
+      className={cn("min-w-[180px]", className)}
       {...props}
     >
-      {children
-        ?? models.map(model => (
+      {children ??
+        models.map((model) => (
           <ModelSelectorItem
             key={model.id}
             model={model}
@@ -161,15 +161,15 @@ function ModelSelectorContent({
           />
         ))}
     </SelectContent>
-  )
+  );
 }
 
 export type ModelSelectorItemProps = Omit<
   ComponentPropsWithoutRef<typeof SelectItem>,
-  'value' | 'children'
+  "value" | "children"
 > & {
-  model: ModelOption
-}
+  model: ModelOption;
+};
 
 function ModelSelectorItem({
   model,
@@ -182,9 +182,9 @@ function ModelSelectorItem({
       value={model.id}
       textValue={model.name}
       className={cn(
-        'relative flex w-full cursor-default select-none items-center gap-2 rounded-lg py-2 pr-9 pl-3 text-sm outline-none',
-        'focus:bg-accent focus:text-accent-foreground',
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-lg py-2 pr-9 pl-3 text-sm outline-none",
+        "focus:bg-accent focus:text-accent-foreground",
+        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className,
       )}
       {...props}
@@ -210,15 +210,15 @@ function ModelSelectorItem({
         </span>
       )}
     </SelectPrimitive.Item>
-  )
+  );
 }
 
-export type ModelSelectorProps = Omit<ModelSelectorRootProps, 'children'>
-  & VariantProps<typeof selectTriggerVariants> & {
-    contentClassName?: string
-  }
+export type ModelSelectorProps = Omit<ModelSelectorRootProps, "children"> &
+  VariantProps<typeof selectTriggerVariants> & {
+    contentClassName?: string;
+  };
 
-function ModelSelectorImpl({
+const ModelSelectorImpl = ({
   value: controlledValue,
   onValueChange: controlledOnValueChange,
   defaultValue,
@@ -227,23 +227,23 @@ function ModelSelectorImpl({
   size,
   contentClassName,
   ...forwardedProps
-}: ModelSelectorProps) {
-  const isControlled = controlledValue !== undefined
+}: ModelSelectorProps) => {
+  const isControlled = controlledValue !== undefined;
   const [internalValue, setInternalValue] = useState(
-    () => defaultValue ?? models[0]?.id ?? '',
-  )
+    () => defaultValue ?? models[0]?.id ?? "",
+  );
 
-  const value = isControlled ? controlledValue : internalValue
-  const onValueChange = controlledOnValueChange ?? setInternalValue
+  const value = isControlled ? controlledValue : internalValue;
+  const onValueChange = controlledOnValueChange ?? setInternalValue;
 
-  const api = useAssistantApi()
+  const api = useAssistantApi();
 
   useEffect(() => {
-    const config = { config: { modelName: value } }
+    const config = { config: { modelName: value } };
     return api.modelContext().register({
       getModelContext: () => config,
-    })
-  }, [api, value])
+    });
+  }, [api, value]);
 
   return (
     <ModelSelectorRoot
@@ -255,34 +255,34 @@ function ModelSelectorImpl({
       <ModelSelectorTrigger variant={variant} size={size} />
       <ModelSelectorContent className={contentClassName} />
     </ModelSelectorRoot>
-  )
-}
+  );
+};
 
 type ModelSelectorComponent = typeof ModelSelectorImpl & {
-  displayName?: string
-  Root: typeof ModelSelectorRoot
-  Trigger: typeof ModelSelectorTrigger
-  Content: typeof ModelSelectorContent
-  Item: typeof ModelSelectorItem
-  Value: typeof ModelSelectorValue
-}
+  displayName?: string;
+  Root: typeof ModelSelectorRoot;
+  Trigger: typeof ModelSelectorTrigger;
+  Content: typeof ModelSelectorContent;
+  Item: typeof ModelSelectorItem;
+  Value: typeof ModelSelectorValue;
+};
 
 const ModelSelector = memo(
   ModelSelectorImpl,
-) as unknown as ModelSelectorComponent
+) as unknown as ModelSelectorComponent;
 
-ModelSelector.displayName = 'ModelSelector'
-ModelSelector.Root = ModelSelectorRoot
-ModelSelector.Trigger = ModelSelectorTrigger
-ModelSelector.Content = ModelSelectorContent
-ModelSelector.Item = ModelSelectorItem
-ModelSelector.Value = ModelSelectorValue
+ModelSelector.displayName = "ModelSelector";
+ModelSelector.Root = ModelSelectorRoot;
+ModelSelector.Trigger = ModelSelectorTrigger;
+ModelSelector.Content = ModelSelectorContent;
+ModelSelector.Item = ModelSelectorItem;
+ModelSelector.Value = ModelSelectorValue;
 
 export {
   ModelSelector,
-  ModelSelectorContent,
-  ModelSelectorItem,
   ModelSelectorRoot,
   ModelSelectorTrigger,
+  ModelSelectorContent,
+  ModelSelectorItem,
   ModelSelectorValue,
-}
+};
