@@ -84,7 +84,6 @@ function main() {
   const extraMappings = Object.keys(ACTION_TO_REFERENCE).filter(action => !actions.includes(action))
 
   const payload = {
-    generatedAt: new Date().toISOString(),
     source: 'packages/extension/src/browser-use/types.ts',
     totalActions: actions.length,
     undocumented,
