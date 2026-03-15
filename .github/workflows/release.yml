@@ -1,0 +1,70 @@
+name: Release Extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Dry run only (authenticate, do not submit)
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Clean old ZIP artifacts
+        working-directory: packages/extension
+        run: rm -f .output/*-chrome.zip .output/*-firefox.zip .output/*-sources.zip
+
+      - name: Build Chrome ZIP
+        run: pnpm --filter extension zip
+
+      - name: Build Firefox ZIP + Sources ZIP
+        run: pnpm --filter extension zip:firefox
+
+      - name: Submit to Chrome, Firefox, Edge
+        working-directory: packages/extension
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            npx wxt submit --dry-run \
+              --chrome-zip .output/*-chrome.zip \
+              --firefox-zip .output/*-firefox.zip \
+              --firefox-sources-zip .output/*-sources.zip \
+              --edge-zip .output/*-chrome.zip
+          else
+            npx wxt submit \
+              --chrome-zip .output/*-chrome.zip \
+              --firefox-zip .output/*-firefox.zip \
+              --firefox-sources-zip .output/*-sources.zip \
+              --edge-zip .output/*-chrome.zip
+          fi
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+          EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}

@@ -6,16 +6,23 @@
   "scripts": {
     "dev": "pnpm --filter extension dev",
     "zip": "pnpm --filter extension zip",
+    "zip:firefox": "pnpm --filter extension zip:firefox",
     "docs:dev": "pnpm --filter docs dev",
     "docs:build": "pnpm --filter docs build",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "release:bump": "bumpp --recursive",
+    "release:zip": "pnpm --filter extension zip",
+    "release:zip:firefox": "pnpm --filter extension zip:firefox",
+    "release:submit": "pnpm --filter extension exec wxt submit",
+    "release:secrets": "./scripts/release/sync-submit-secrets.sh",
     "prepare": "husky"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@eslint-react/eslint-plugin": "catalog:",
     "@tanstack/eslint-plugin-query": "catalog:",
+    "bumpp": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "eslint-plugin-format": "catalog:",

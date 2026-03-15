@@ -10,6 +10,8 @@
     "dev": "npm run generate-skill-action-index && npm run zip-skills && wxt",
     "build": "npm run generate-skill-action-index && npm run zip-skills && wxt build",
     "zip": "npm run generate-skill-action-index && npm run zip-skills && wxt zip",
+    "zip:firefox": "npm run generate-skill-action-index && npm run zip-skills && wxt zip -b firefox",
+    "zip:edge": "npm run generate-skill-action-index && npm run zip-skills && wxt zip -b edge",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare"
   },
