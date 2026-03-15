@@ -11,7 +11,7 @@
     "docs:build": "pnpm --filter docs build",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "release": "pnpm build && bumpp",
+    "release": "pnpm build && bumpp -r --commit --tag --no-push",
     "release:submit": "pnpm --filter extension exec wxt submit",
     "release:secrets": "./scripts/release/sync-submit-secrets.sh",
     "prepare": "husky"
