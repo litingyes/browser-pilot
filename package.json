@@ -5,12 +5,13 @@
   "description": "Your browser, on autopilot.",
   "scripts": {
     "dev": "pnpm --filter extension dev",
+    "build": "pnpm --filter extension build",
     "zip": "pnpm --filter extension zip",
     "docs:dev": "pnpm --filter docs dev",
     "docs:build": "pnpm --filter docs build",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "release": "pnpm zip && bumpp",
+    "release": "pnpm build && bumpp",
     "release:submit": "pnpm --filter extension exec wxt submit",
     "release:secrets": "./scripts/release/sync-submit-secrets.sh",
     "prepare": "husky"
