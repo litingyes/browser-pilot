@@ -11,7 +11,7 @@ interface AiToolProps {
   part: ToolPart
 }
 
-export function AiTool({ part }: AiToolProps) {
+export default function AiMessageTool({ part }: AiToolProps) {
   const isCompleted = part.state === 'output-available' || part.state === 'output-denied' || part.state === 'output-error'
 
   return (

@@ -1,4 +1,3 @@
-import type { AiGateway } from '@/stores/ai-gateways'
 import { useChat } from '@ai-sdk/react'
 import { DirectChatTransport } from 'ai'
 import { InfoIcon } from 'lucide-react'
@@ -6,18 +5,16 @@ import { useMemo, useRef } from 'react'
 import { assistant } from '@/agents/assistant'
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from '@/components/ai-elements/conversation'
 import { Message, MessageContent } from '@/components/ai-elements/message'
-import { ModelSelector, ModelSelectorContent, ModelSelectorEmpty, ModelSelectorGroup, ModelSelectorInput, ModelSelectorItem, ModelSelectorList, ModelSelectorLogo, ModelSelectorName, ModelSelectorTrigger } from '@/components/ai-elements/model-selector'
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, PromptInputTools } from '@/components/ai-elements/prompt-input'
 import { Shimmer } from '@/components/ai-elements/shimmer'
-import AiMessage from '@/components/ai-message'
+import AiMessage from '@/components/ai-ui/message'
+import AiModelSelector from '@/components/ai-ui/model-selector'
+import { AiProvider } from '@/components/ai-ui/provider'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAiGateway } from '@/hooks/use-ai-gateway'
 import { useAiModels } from '@/hooks/use-ai-models'
 import { i18n } from '@/i18n'
-import { parseAiModelId } from '@/lib/ai-provider'
 import { db } from '@/lib/indexeddb'
 
 const NON_DEBUGGABLE_TAB_URL_PREFIXES = [
@@ -74,14 +71,6 @@ export default function Chat() {
   const selectedModelRef = useRef(selectedModel)
   selectedModelRef.current = selectedModel
 
-  const selectedModelMetadata = useMemo(() => {
-    if (!selectedModel) {
-      return null
-    }
-
-    return parseAiModelId(selectedModel)
-  }, [selectedModel])
-
   const transport = useMemo(() => {
     return new DirectChatTransport({
       agent: assistant,
@@ -110,121 +99,57 @@ export default function Chat() {
     return !lastMessage?.parts?.length
   }, [messages, isLoading])
 
-  const modelGroups = useMemo(() => {
-    return aiModelIds.reduce<Record<string, {
-      models: {
-        id: string
-        modelName: string
-      }[]
-      providerForLogo: AiGateway['provider']
-    }>>((groups, aiModelId) => {
-      const { providerId, providerName, modelName } = parseAiModelId(aiModelId)
-      if (!groups[providerName]) {
-        groups[providerName] = {
-          models: [],
-          providerForLogo: providerId,
-        }
-      }
-      groups[providerName].models.push({
-        id: aiModelId,
-        modelName,
-      })
-
-      return groups
-    }, {})
-  }, [aiModelIds])
-
   return (
-    <div className="h-full flex flex-col">
-      <Conversation>
-        <ConversationContent>
-          {messages.map((message, messageIndex) => {
-            const isLastMessage = messageIndex === messages.length - 1
+    <AiProvider>
+      <div className="h-full flex flex-col">
+        <Conversation>
+          <ConversationContent>
+            {messages.map((message, messageIndex) => {
+              const isLastMessage = messageIndex === messages.length - 1
 
-            return (
-              <AiMessage key={message.id} message={message} isLastMessage={isLastMessage} isLoading={isLoading} regenerate={regenerate} />
-            )
-          })}
-          {isLoadingAndNotResponse && (
-            <Message from="system">
-              <MessageContent>
-                <div className="flex items-center gap-2">
-                  <Spinner />
-                  <Shimmer>
-                    {i18n.t('chat.thinking')}
-                  </Shimmer>
-                </div>
-              </MessageContent>
-            </Message>
-          )}
-          {error && (
-            <Alert variant="destructive">
-              <InfoIcon />
-              <AlertTitle>
-                {i18n.t('chat.error')}
-              </AlertTitle>
-              <AlertDescription>
-                {error.message}
-              </AlertDescription>
-            </Alert>
-          )}
-          {!messages.length && <ConversationEmptyState />}
-        </ConversationContent>
-        <ConversationScrollButton />
-      </Conversation>
-      <PromptInput onSubmit={message => sendMessage(message)}>
-        <PromptInputBody>
-          <PromptInputTextarea />
-        </PromptInputBody>
-        <PromptInputFooter>
-          <PromptInputTools>
-            <ModelSelector>
-              <Tooltip>
-                <TooltipTrigger
-                  render={(
-                    <ModelSelectorTrigger
-                      render={(
-                        <Button className="w-fit self-start px-2.5 font-normal" size="sm" type="button" variant="outline" />
-                      )}
-                    >
-                      {selectedModelMetadata?.modelName ?? i18n.t('chat.selectModel')}
-                    </ModelSelectorTrigger>
-                  )}
-                />
-                {selectedModelMetadata && (
-                  <TooltipContent>
-                    {selectedModelMetadata.providerName}
-                  </TooltipContent>
-                )}
-              </Tooltip>
-              <ModelSelectorContent className="sm:max-w-2xl">
-                <ModelSelectorInput placeholder={i18n.t('chat.searchModels')} />
-                <ModelSelectorList>
-                  <ModelSelectorEmpty>{i18n.t('chat.noModelsFound')}</ModelSelectorEmpty>
-                  {Object.entries(modelGroups).map(([providerName, group]) => (
-                    <ModelSelectorGroup key={providerName} heading={providerName}>
-                      {group.models.map(model => (
-                        <ModelSelectorItem
-                          data-checked={selectedModel === model.id}
-                          key={model.id}
-                          value={`${providerName} ${model.modelName}`}
-                          onSelect={() => {
-                            setAiModel('sidepanel:chat', model.id)
-                          }}
-                        >
-                          <ModelSelectorLogo provider={group.providerForLogo === 'openai-compatible' ? 'openai' : group.providerForLogo} />
-                          <ModelSelectorName>{model.modelName}</ModelSelectorName>
-                        </ModelSelectorItem>
-                      ))}
-                    </ModelSelectorGroup>
-                  ))}
-                </ModelSelectorList>
-              </ModelSelectorContent>
-            </ModelSelector>
-          </PromptInputTools>
-          <PromptInputSubmit onStop={stop} status={status} />
-        </PromptInputFooter>
-      </PromptInput>
-    </div>
+              return (
+                <AiMessage key={message.id} message={message} isLastMessage={isLastMessage} isLoading={isLoading} regenerate={regenerate} />
+              )
+            })}
+            {isLoadingAndNotResponse && (
+              <Message from="system">
+                <MessageContent>
+                  <div className="flex items-center gap-2">
+                    <Spinner />
+                    <Shimmer>
+                      {i18n.t('chat.thinking')}
+                    </Shimmer>
+                  </div>
+                </MessageContent>
+              </Message>
+            )}
+            {error && (
+              <Alert variant="destructive">
+                <InfoIcon />
+                <AlertTitle>
+                  {i18n.t('chat.error')}
+                </AlertTitle>
+                <AlertDescription>
+                  {error.message}
+                </AlertDescription>
+              </Alert>
+            )}
+            {!messages.length && <ConversationEmptyState />}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+        <PromptInput onSubmit={message => sendMessage(message)}>
+          <PromptInputBody>
+            <PromptInputTextarea />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputTools>
+              <AiModelSelector value={selectedModel} size="sm" onValueChange={id => setAiModel('sidepanel:chat', id)} />
+            </PromptInputTools>
+            <PromptInputSubmit onStop={stop} status={status} />
+          </PromptInputFooter>
+        </PromptInput>
+      </div>
+    </AiProvider>
   )
 }

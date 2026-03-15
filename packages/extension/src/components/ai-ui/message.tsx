@@ -4,7 +4,7 @@ import { CopyIcon, RefreshCcwIcon } from 'lucide-react'
 import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from '@/components/ai-elements/message'
 import { Reasoning, ReasoningContent, ReasoningTrigger } from '@/components/ai-elements/reasoning'
 import { i18n } from '@/i18n'
-import { AiTool } from './tool'
+import AiMessageTool from './message-tool'
 
 interface AiMessageProps {
   message: UIMessage
@@ -41,7 +41,8 @@ export default function AiMessage({ message, isLastMessage, isLoading, regenerat
           }
           else if (isToolPart(part)) {
             return (
-              <AiTool key={`${message.id}-${part.type}-${partIndex}`} part={part} />
+            // eslint-disable-next-line react/no-array-index-key -- streamed parts have no stable id
+              <AiMessageTool key={`${message.id}-${part.type}-${partIndex}`} part={part} />
             )
           }
 
