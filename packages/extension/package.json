@@ -9,9 +9,10 @@
     "zip-skills": "tsx scripts/zip-skills.ts",
     "dev": "npm run generate-skill-action-index && npm run zip-skills && wxt",
     "build": "npm run generate-skill-action-index && npm run zip-skills && wxt build",
-    "zip": "npm run generate-skill-action-index && npm run zip-skills && wxt zip",
-    "zip:firefox": "npm run generate-skill-action-index && npm run zip-skills && wxt zip -b firefox",
-    "zip:edge": "npm run generate-skill-action-index && npm run zip-skills && wxt zip -b edge",
+    "zip": "npm run build && npm run zip:chrome && npm run zip:firefox && npm run zip:edge",
+    "zip:chrome": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "zip:edge": "wxt zip -b edge",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare"
   },

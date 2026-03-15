@@ -1,7 +1,9 @@
 shellEmulator: true
+
 trustPolicy: off
 packages:
   - packages/*
+
 catalog:
   '@ai-sdk/anthropic': ^3.0.58
   '@ai-sdk/deepseek': ^2.0.24
@@ -85,7 +87,9 @@ catalog:
   vaul: ^1.1.2
   wxt: ^0.20.18
   zod: ^4.3.6
+
 onlyBuiltDependencies:
   - esbuild
   - msw
+  - sharp
   - spawn-sync
