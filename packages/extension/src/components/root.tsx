@@ -4,6 +4,7 @@ import type { AI_MODELS } from '@/stores/ai-models'
 import { storage } from '#imports'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { StrictMode, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -64,6 +65,7 @@ export default function Root({ children }: { children: ReactNode }) {
           <QueryClientProvider client={queryClient}>
             {children}
             {import.meta.env.WXT_DEVTOOL_QUERY === 'true' && <ReactQueryDevtools />}
+            {import.meta.env.WXT_DEVTOOL_ROUTER === 'true' && <TanStackRouterDevtools />}
           </QueryClientProvider>
         </TooltipProvider>
       </I18nProvider>
