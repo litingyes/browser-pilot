@@ -39,8 +39,48 @@ function charToKeyInfo(ch: string) {
 
   return {
     key: ch,
-    code: isAlpha ? `Key${upper}` : (isDigit ? `Digit${ch}` : ''),
-    keyCode: ch.charCodeAt(0),
+    code: isAlpha ? `Key${upper}` : (isDigit ? `Digit${ch}` : punctuationKeyInfo(ch).code),
+    keyCode: isAlpha || isDigit ? ch.charCodeAt(0) : punctuationKeyInfo(ch).keyCode,
+  }
+}
+
+function punctuationKeyInfo(ch: string) {
+  switch (ch) {
+    case ';':
+    case ':':
+      return { code: 'Semicolon', keyCode: 186 }
+    case '=':
+    case '+':
+      return { code: 'Equal', keyCode: 187 }
+    case ',':
+    case '<':
+      return { code: 'Comma', keyCode: 188 }
+    case '-':
+    case '_':
+      return { code: 'Minus', keyCode: 189 }
+    case '.':
+    case '>':
+      return { code: 'Period', keyCode: 190 }
+    case '/':
+    case '?':
+      return { code: 'Slash', keyCode: 191 }
+    case '`':
+    case '~':
+      return { code: 'Backquote', keyCode: 192 }
+    case '[':
+    case '{':
+      return { code: 'BracketLeft', keyCode: 219 }
+    case '\\':
+    case '|':
+      return { code: 'Backslash', keyCode: 220 }
+    case ']':
+    case '}':
+      return { code: 'BracketRight', keyCode: 221 }
+    case '\'':
+    case '"':
+      return { code: 'Quote', keyCode: 222 }
+    default:
+      return { code: '', keyCode: 0 }
   }
 }
 
@@ -208,23 +248,30 @@ export async function typeText(
   for (const ch of text) {
     const { key, code, keyCode } = charToKeyInfo(ch)
 
-    await sendCdp(tabId, 'Input.dispatchKeyEvent', {
-      type: 'keyDown',
-      key,
-      code,
-      text: ch,
-      unmodifiedText: ch,
-      windowsVirtualKeyCode: keyCode,
-      nativeVirtualKeyCode: keyCode,
-    })
+    if (keyCode === 0 && code.length === 0) {
+      await sendCdp(tabId, 'Input.insertText', {
+        text: ch,
+      })
+    }
+    else {
+      await sendCdp(tabId, 'Input.dispatchKeyEvent', {
+        type: 'keyDown',
+        key,
+        code,
+        text: ch,
+        unmodifiedText: ch,
+        windowsVirtualKeyCode: keyCode,
+        nativeVirtualKeyCode: keyCode,
+      })
 
-    await sendCdp(tabId, 'Input.dispatchKeyEvent', {
-      type: 'keyUp',
-      key,
-      code,
-      windowsVirtualKeyCode: keyCode,
-      nativeVirtualKeyCode: keyCode,
-    })
+      await sendCdp(tabId, 'Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        key,
+        code,
+        windowsVirtualKeyCode: keyCode,
+        nativeVirtualKeyCode: keyCode,
+      })
+    }
 
     if (delayMs > 0) {
       await sleep(delayMs)
@@ -307,6 +354,10 @@ export async function check(tabId: number, selectorOrRef: string) {
   const checked = await isElementChecked(tabId, selectorOrRef)
   if (!checked) {
     await click(tabId, selectorOrRef)
+    const clickedChecked = await isElementChecked(tabId, selectorOrRef)
+    if (!clickedChecked) {
+      await jsClickCheckbox(tabId, selectorOrRef)
+    }
   }
 }
 
@@ -314,7 +365,39 @@ export async function uncheck(tabId: number, selectorOrRef: string) {
   const checked = await isElementChecked(tabId, selectorOrRef)
   if (checked) {
     await click(tabId, selectorOrRef)
+    const clickedChecked = await isElementChecked(tabId, selectorOrRef)
+    if (clickedChecked) {
+      await jsClickCheckbox(tabId, selectorOrRef)
+    }
   }
+}
+
+async function jsClickCheckbox(tabId: number, selectorOrRef: string) {
+  const objectId = await resolveElementObjectId(tabId, selectorOrRef)
+  await sendCdp(tabId, 'Runtime.callFunctionOn', {
+    functionDeclaration: `function() {
+      const el = this
+      const tag = el.tagName && el.tagName.toUpperCase()
+      if (tag === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) {
+        el.click()
+        return
+      }
+      const label = tag === 'LABEL' ? el : (el.closest && el.closest('label'))
+      if (label && label.tagName && label.tagName.toUpperCase() === 'LABEL' && label.control) {
+        label.control.click()
+        return
+      }
+      const input = el.querySelector && el.querySelector('input[type="checkbox"], input[type="radio"]')
+      if (input) {
+        input.click()
+        return
+      }
+      el.click()
+    }`,
+    objectId,
+    returnByValue: true,
+    awaitPromise: false,
+  })
 }
 
 export async function focus(tabId: number, selectorOrRef: string) {

@@ -1,9 +1,41 @@
 import { ensureTabState, getTabState, updateTabState } from './state'
 
 const DEBUGGER_VERSION = '1.3'
+const DETACHED_ERROR_PATTERNS = [
+  'Debugger is not attached to the tab with id',
+  'No target with given id found',
+  'target closed',
+  'Cannot access a chrome:// URL',
+]
+let detachListenerRegistered = false
 
 function asMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error)
+}
+
+function normalizeMessage(message: string) {
+  return message.toLowerCase()
+}
+
+function isDetachLikeError(error: unknown) {
+  const message = normalizeMessage(asMessage(error))
+  return DETACHED_ERROR_PATTERNS.some(pattern => message.includes(pattern.toLowerCase()))
+}
+
+function registerDetachListener() {
+  if (detachListenerRegistered) {
+    return
+  }
+
+  browser.debugger.onDetach.addListener((source) => {
+    const tabId = source.tabId
+    if (!Number.isInteger(tabId)) {
+      return
+    }
+    updateTabState(tabId!, { attached: false })
+  })
+
+  detachListenerRegistered = true
 }
 
 async function ensureTabExists(tabId: number) {
@@ -29,6 +61,7 @@ async function executeSendCommand(tabId: number, method: string, params?: Record
 }
 
 export async function attachDebugger(tabId: number) {
+  registerDetachListener()
   await ensureTabExists(tabId)
   const currentState = getTabState(tabId)
   if (currentState?.attached) {
@@ -42,8 +75,15 @@ export async function attachDebugger(tabId: number) {
 
   await new Promise((resolve, reject) => {
     browser.debugger.attach({ tabId }, DEBUGGER_VERSION, () => {
-      if (browser.runtime.lastError) {
-        reject(new Error(browser.runtime.lastError.message))
+      const lastError = browser.runtime.lastError
+      if (lastError) {
+        const message = lastError.message
+        // Tab can already be attached after extension hot reload or races.
+        if (typeof message === 'string' && message.toLowerCase().includes('already attached')) {
+          resolve(true)
+          return
+        }
+        reject(new Error(message))
         return
       }
       resolve(true)
@@ -65,6 +105,7 @@ export async function detachDebugger(tabId: number) {
 }
 
 export async function sendCdp(tabId: number, method: string, params?: Record<string, unknown>) {
+  registerDetachListener()
   await ensureTabExists(tabId)
   if (!getTabState(tabId)?.attached) {
     await attachDebugger(tabId)
@@ -74,8 +115,7 @@ export async function sendCdp(tabId: number, method: string, params?: Record<str
     return await executeSendCommand(tabId, method, params)
   }
   catch (error) {
-    const message = asMessage(error)
-    if (!message.includes('Debugger is not attached to the tab with id')) {
+    if (!isDetachLikeError(error)) {
       throw error
     }
 

@@ -215,12 +215,15 @@ export async function navigate(
   await sendCdp(tabId, 'Network.enable')
   await sendCdp(tabId, 'Runtime.enable')
 
+  // Register lifecycle listeners before navigate to avoid missing fast events.
+  const lifecyclePromise = waitForLifecycle(tabId, waitUntil, DEFAULT_TIMEOUT_MS)
   const navResult = await sendCdp(tabId, 'Page.navigate', { url }) as NavigateResult
   if (typeof navResult.errorText === 'string' && navResult.errorText.length > 0) {
+    void lifecyclePromise.catch(() => {})
     throw new Error(`Navigation failed: ${navResult.errorText}`)
   }
 
-  await waitForLifecycle(tabId, waitUntil, DEFAULT_TIMEOUT_MS)
+  await lifecyclePromise
 
   const [resolvedUrl, title] = await Promise.all([
     getUrl(tabId),

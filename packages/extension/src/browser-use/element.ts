@@ -24,6 +24,21 @@ interface DomGetBoxModelResponse {
   }
 }
 
+interface AXValue {
+  value?: string | number | boolean
+}
+
+interface AXNode {
+  ignored?: boolean
+  role?: AXValue
+  name?: AXValue
+  backendDOMNodeId?: number
+}
+
+interface AXTreeResponse {
+  nodes?: AXNode[]
+}
+
 interface ElementCenter {
   x: number
   y: number
@@ -83,34 +98,46 @@ async function evaluateValue(tabId: number, expression: string) {
   return result.result?.value
 }
 
-async function resolveByRoleName(
+function axToString(value?: AXValue) {
+  if (value?.value === undefined || value?.value === null) {
+    return ''
+  }
+  return String(value.value)
+}
+
+async function findBackendNodeIdByRoleName(
   tabId: number,
   role: string,
   name: string,
   nth?: number,
-): Promise<ElementCenter> {
+) {
+  const response = await sendCdp(tabId, 'Accessibility.getFullAXTree') as AXTreeResponse
+  const nodes = response.nodes ?? []
   const nthIndex = nth ?? 0
-  const value = await evaluateValue(tabId, `(() => {
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
-    const matches = [];
-    let node;
-    while (node = walker.nextNode()) {
-      const r = node.getAttribute('role') || node.tagName.toLowerCase();
-      const n = node.getAttribute('aria-label') || node.textContent.trim().slice(0, 100);
-      if (r === ${JSON.stringify(role)} && n === ${JSON.stringify(name)}) {
-        matches.push(node);
-      }
-    }
-    const el = matches[${nthIndex}];
-    if (!el) return null;
-    const rect = el.getBoundingClientRect();
-    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
-  })()`)
+  let matchCount = 0
 
-  if (!isElementCenter(value)) {
-    throw new Error(`Could not locate element with role=${role} name=${name}`)
+  for (const node of nodes) {
+    if (node.ignored) {
+      continue
+    }
+    const nodeRole = axToString(node.role)
+    const nodeName = axToString(node.name)
+    if (nodeRole !== role || nodeName !== name) {
+      continue
+    }
+
+    if (matchCount === nthIndex) {
+      const backendNodeId = node.backendDOMNodeId
+      if (!backendNodeId) {
+        throw new Error(`AX node has no backendDOMNodeId for role=${role} name=${name}`)
+      }
+      return backendNodeId
+    }
+
+    matchCount += 1
   }
-  return value
+
+  throw new Error(`Could not locate element with role=${role} name=${name}`)
 }
 
 async function resolveBySelector(tabId: number, selector: string): Promise<ElementCenter> {
@@ -129,6 +156,7 @@ async function resolveBySelector(tabId: number, selector: string): Promise<Eleme
 
 export async function resolveElementCenter(tabId: number, selectorOrRef: string): Promise<ElementCenter> {
   await attachDebugger(tabId)
+  await sendCdp(tabId, 'DOM.enable')
 
   const refId = parseRef(selectorOrRef)
   if (!refId) {
@@ -142,25 +170,42 @@ export async function resolveElementCenter(tabId: number, selectorOrRef: string)
   }
 
   if (ref.backendNodeId) {
-    const boxModel = await sendCdp(tabId, 'DOM.getBoxModel', {
-      backendNodeId: ref.backendNodeId,
-    }) as DomGetBoxModelResponse
+    try {
+      const boxModel = await sendCdp(tabId, 'DOM.getBoxModel', {
+        backendNodeId: ref.backendNodeId,
+      }) as DomGetBoxModelResponse
 
-    const content = boxModel.model?.content ?? []
-    if (content.length >= 8) {
-      const x = (content[0] + content[2] + content[4] + content[6]) / 4
-      const y = (content[1] + content[3] + content[5] + content[7]) / 4
-      return { x, y }
+      const content = boxModel.model?.content ?? []
+      if (content.length >= 8) {
+        const x = (content[0] + content[2] + content[4] + content[6]) / 4
+        const y = (content[1] + content[3] + content[5] + content[7]) / 4
+        return { x, y }
+      }
+    }
+    catch {
+      // stale backendNodeId; fallback to AX role/name/nth resolution below
     }
   }
 
-  return resolveByRoleName(tabId, ref.role, ref.name, ref.nth)
+  const freshBackendNodeId = await findBackendNodeIdByRoleName(tabId, ref.role, ref.name, ref.nth)
+  const boxModel = await sendCdp(tabId, 'DOM.getBoxModel', {
+    backendNodeId: freshBackendNodeId,
+  }) as DomGetBoxModelResponse
+  const content = boxModel.model?.content ?? []
+  if (content.length >= 8) {
+    const x = (content[0] + content[2] + content[4] + content[6]) / 4
+    const y = (content[1] + content[3] + content[5] + content[7]) / 4
+    return { x, y }
+  }
+
+  throw new Error(`Could not resolve element center for ref: ${refId}`)
 }
 
 export async function resolveElementObjectId(tabId: number, selectorOrRef: string): Promise<string> {
   await attachDebugger(tabId)
   await sendCdp(tabId, 'DOM.enable')
   await sendCdp(tabId, 'Runtime.enable')
+  await sendCdp(tabId, 'Accessibility.enable')
 
   const refId = parseRef(selectorOrRef)
   if (refId) {
@@ -171,16 +216,34 @@ export async function resolveElementObjectId(tabId: number, selectorOrRef: strin
     }
 
     if (ref.backendNodeId) {
-      const resolveResult = await sendCdp(tabId, 'DOM.resolveNode', {
-        backendNodeId: ref.backendNodeId,
-        objectGroup: 'agent-browser',
-      }) as DomResolveNodeResponse
+      try {
+        const resolveResult = await sendCdp(tabId, 'DOM.resolveNode', {
+          backendNodeId: ref.backendNodeId,
+          objectGroup: 'agent-browser',
+        }) as DomResolveNodeResponse
 
-      const objectId = resolveResult.object?.objectId
-      if (objectId) {
-        return objectId
+        const objectId = resolveResult.object?.objectId
+        if (objectId) {
+          return objectId
+        }
+      }
+      catch {
+        // stale backendNodeId; fallback to AX role/name/nth resolution below
       }
     }
+
+    const freshBackendNodeId = await findBackendNodeIdByRoleName(tabId, ref.role, ref.name, ref.nth)
+    const resolveResult = await sendCdp(tabId, 'DOM.resolveNode', {
+      backendNodeId: freshBackendNodeId,
+      objectGroup: 'agent-browser',
+    }) as DomResolveNodeResponse
+
+    const objectId = resolveResult.object?.objectId
+    if (objectId) {
+      return objectId
+    }
+
+    throw new Error(`No objectId for ref ${refId}`)
   }
 
   const evaluateResult = await sendCdp(tabId, 'Runtime.evaluate', {
